@@ -7,19 +7,18 @@ devtools::install_github("vqv/ggbiplot")
 library(ggbiplot)
 library(ggrepel)
 
-getwd()
-setwd("/Users/Allan/Documents/Post crash 2016/Home laptop June 2013/Research/Splicing II/Network/Clock ChIP Datasets/Clock_ChIP_Datasets/")
+setwd("/Users/Allan/Documents/plant_ChIP_meta/")
 
 # gather and join together all the WebPlotDigitizer files for each cluster group
 # WebPlotDigitizer https://apps.automeris.io/wpd/
-clusters_aggregated <- list.files(path = './cluster_image_analysis_aggregate', 
+clusters_aggregated <- list.files(path = './00_raw_data/cluster_image_analysis_aggregate', 
                                   pattern = '*.csv', full.names = TRUE) %>% 
   lapply(read_csv) %>% 
   purrr::reduce(full_join, by = 'id') %>% 
   remove_empty(which = 'cols') %>% 
   relocate(c(cluster_2, cluster_3, cluster_4, cluster_5, cluster_6, cluster_7, 
              cluster_8, cluster_9), .before = cluster_10) %>% 
-  write_csv('cluster_profiles_aggregated.csv')
+  write_csv('./01_tidy_data/cluster_profiles_aggregated.csv')
 
 # split by individual days
 clusters_aggregated_day1 <- clusters_aggregated[row.names(clusters_aggregated) %in% 1:9, ]
@@ -31,25 +30,31 @@ clusters_aggregated_day1_df <- data.frame(t(clusters_aggregated_day1[, -1])) %>%
   rename_with(~ paste0("s", 1:9)) %>% 
   mutate(clusters = paste0("cluster_", 1:74)) %>% 
   relocate(clusters) %>% 
-  write_csv('clusters_aggregated_day1.csv')
+  write_csv('./01_tidy_data/clusters_aggregated_day1.csv')
 
 clusters_aggregated_day2_df <- data.frame(t(clusters_aggregated_day2[, -1])) %>% 
   rename_with(~ paste0("s", 9:17)) %>% 
   mutate(clusters = paste0("cluster_", 1:74)) %>% 
   relocate(clusters) %>% 
-  write_csv('clusters_aggregated_day2.csv')
+  write_csv('./01_tidy_data/clusters_aggregated_day2.csv')
 
 clusters_aggregated_day5_df <- data.frame(t(clusters_aggregated_day5[, -1])) %>% 
   rename_with(~ paste0("s", 18:26)) %>% 
   mutate(clusters = paste0("cluster_", 1:74)) %>% 
   relocate(clusters) %>% 
-  write_csv('clusters_aggregated_day5.csv')
+  write_csv('./01_tidy_data/clusters_aggregated_day5.csv')
 
 # use meta2d from MetaCycle package to detect rhythmic signals from time-series datasets with multiple methods
 # https://cran.r-project.org/web/packages/MetaCycle/MetaCycle.pdf
 # https://cran.r-project.org/web/packages/MetaCycle/vignettes/implementation.html
 # output files are in specified outdir
-meta2d(infile = 'clusters_aggregated_day5.csv', filestyle = 'csv', outdir = 'cluster_days_output_day5', 
+meta2d(infile = './01_tidy_data/clusters_aggregated_day1.csv', filestyle = 'csv', outdir = './00_raw_data/cluster_days_output_day1', 
+       timepoints = seq(0, 24, by = 3))
+
+meta2d(infile = './01_tidy_data/clusters_aggregated_day2.csv', filestyle = 'csv', outdir = './00_raw_data/cluster_days_output_day2', 
+       timepoints = seq(0, 24, by = 3))
+
+meta2d(infile = './01_tidy_data/clusters_aggregated_day5.csv', filestyle = 'csv', outdir = './00_raw_data/cluster_days_output_day5', 
        timepoints = seq(0, 24, by = 3))
 
 # read back in the meta2d output file with selected columns
