@@ -225,33 +225,30 @@ TF <- read_csv("./00_raw_data/TF Network Cluster Nov2018.csv") %>%
 # read in the Adams LHY paper dataset and skip first 2 lines
 # The LHY paper is Adams et al. (2018) New Phytologist 220(3); 897
 # supplemental data set (Table S2) 
-adams <- read_csv("nph15415-sup-0002-tables2.csv",skip=2) %>% 
+adams <- read_csv("./00_raw_data/nph15415-sup-0002-tables2.csv",skip=2) %>% 
   dplyr::select(gene_ID = 1) %>%
   filter(!is.na(gene_ID)) %>%
-  distinct(gene_ID) 
-#%>% 
-write_csv("LHY_targets.csv")
+  distinct(gene_ID) %>% 
+  write_csv("./01_tidy_data/LHY_targets.csv")
 
 # CCA1 Nagel et al. dataset
 # read in the Nagel CCA1 paper dataset and skip first 2 lines
 # The CCA1 paper is Nagel et al. (2015) PNAS 112(34); E4802
 # supplemental data set (Table S1) 
-nagel <- read_csv("pnas.1513609112.sd01.csv",skip=2) %>% 
+nagel <- read_csv("./00_raw_data/pnas.1513609112.sd01.csv",skip=2) %>% 
   dplyr::select(gene_ID = 10) %>% 
   mutate(gene_ID = str_sub(gene_ID, end = 9)) %>% 
-  distinct(gene_ID) 
-#%>% 
-write_csv("./Clock ChIP targets/CCA1_nagel_targets.csv")
+  distinct(gene_ID) %>% 
+  write_csv("./01_tidy_data/CCA1_nagel_targets.csv")
 
 # CCA1 Kamioka et al. dataset
 # read in the Kamioka CCA1 paper dataset and skip first 2 lines
 # The CCA1 paper is Kamioka et al. (2016) Plant Cell 28(3); 696
 # supplemental data set (Table S1C)
-kamioka <- read_csv("TPC2015-00737-RAR3_Supplemental_Data_Set_1C.csv",skip=3) %>% 
+kamioka <- read_csv("./00_raw_data/TPC2015-00737-RAR3_Supplemental_Data_Set_1C.csv",skip=3) %>% 
   dplyr::select(gene_ID = 10) %>% 
-  distinct(gene_ID) 
-#%>% 
-write_csv("./Clock ChIP targets/CCA1_kamioka_targets.csv")
+  distinct(gene_ID) %>% 
+  write_csv("./01_tidy_data/CCA1_kamioka_targets.csv")
 
 # merge the nagel and kamioka CCA1 datasets
 # use inner_join from dplyr
@@ -262,61 +259,55 @@ kamioka_nagel_merge <- inner_join(nagel, kamioka, by = "gene_ID")
 # read in the Huang TOC1 paper dataset
 # The TOC1 paper is Huang et al. (2012) Science 336:75
 # supplemental data set (Table S1)
-huang <- read_csv("Huang TOC1 CHiP TableS1.csv") %>% 
+huang <- read_csv("./00_raw_data/Huang TOC1 CHiP TableS1.csv") %>% 
   dplyr::select(gene_ID = 14) %>% 
-  distinct(gene_ID) 
-#%>% 
-write_csv("./Clock ChIP targets/TOC1_huang_targets.csv")
+  distinct(gene_ID) %>% 
+  write_csv("./01_tidy_data/TOC1_huang_targets.csv")
 
 # PRR5 dataset
 # read in the Nakamichi PRR5 paper dataset
 # The PRR5 paper is Nakamichi et al. (2012) PNAS 109:17123
 # supplemental data set (Table S3) 
-nakamichi <- read_csv("Dataset S3 Nakamichi et al PRR5 binding targets PNAS 2012.csv", skip=2) %>% 
+nakamichi <- read_csv("./00_raw_data/Dataset S3 Nakamichi et al PRR5 binding targets PNAS 2012.csv", skip=2) %>% 
   dplyr::select(gene_ID = 3) %>% 
-  distinct(gene_ID) 
-#%>% 
-write_csv("./Clock ChIP targets/PRR5_nakamichi_targets.csv")
+  distinct(gene_ID) %>%
+  write_csv("./01_tidy_data/PRR5_nakamichi_targets.csv")
 
 # PRR7 dataset
 # read in the Liu PRR7 paper dataset
 # The PRR7 paper is Liu et al. (2013) The Plant Journal 76:101
 # supplemental data set (Table S1)
-liu <- read_csv("Dataset S1 Liu et al PRR7 edit.csv") %>% 
+liu <- read_csv("./00_raw_data/Dataset S1 Liu et al PRR7 edit.csv") %>% 
   dplyr::select(gene_ID = 17) %>% 
-  distinct(gene_ID) 
-#%>% 
-write_csv("./Clock ChIP targets/PRR7_liu_targets.csv")
+  distinct(gene_ID) %>%
+  write_csv("./01_tidy_data/PRR7_liu_targets.csv")
 
 # LUX dataset
 # read in the Ezer EC paper for the LUX dataset (LUX_17 tab)
 # The Evening Complex (EC) paper is Ezer et al. (2017) Nature Plants 3: article 17087
 # supplemental data set (LUX_17 tab of Table S6) 
-ezer_LUX <- read_csv("Ezer et al nplants Suppl Table S6.csv") %>% 
+ezer_LUX <- read_csv("./00_raw_data/Ezer et al nplants Suppl Table S6.csv") %>% 
   dplyr::select(gene_ID = 1) %>% 
-  distinct(gene_ID) 
-#%>% 
-write_csv("./Clock ChIP targets/LUX_ezer_targets.csv")
+  distinct(gene_ID) %>% 
+  write_csv("./01_tidy_data/LUX_ezer_targets.csv")
 
 # ELF3 dataset
 # read in the Ezer EC paper for the ELF3 dataset (ELF3_22 tab)
 # The Evening Complex (EC) paper is Ezer et al. (2017) Nature Plants 3: article 17087
 # supplemental data set (ELF3_22 tab of Table S6) 
-ezer_ELF3 <- read_csv("ELF3_22 Ezer Table S6.csv") %>% 
+ezer_ELF3 <- read_csv("./00_raw_data/ELF3_22 Ezer Table S6.csv") %>% 
   dplyr::select(gene_ID = 1) %>% 
-  distinct(gene_ID) 
-#%>% 
-write_csv("./Clock ChIP targets/ELF3_ezer_targets.csv")
+  distinct(gene_ID) %>%
+  write_csv("./01_tidy_data/ELF3_ezer_targets.csv")
 
 # ELF4 dataset
 # read in the Ezer EC paper for the ELF4 dataset (ELF4_22 tab)
 # The Evening Complex (EC) paper is Ezer et al. (2017) Nature Plants 3: article 17087
 # supplemental data set (ELF4_22 tab of Table S6) 
-ezer_ELF4 <- read_csv("ELF4_22 Ezer Table S6.csv") %>% 
+ezer_ELF4 <- read_csv("./00_raw_data/ELF4_22 Ezer Table S6.csv") %>% 
   dplyr::select(gene_ID = 1) %>% 
-  distinct(gene_ID) 
-#%>% 
-write_csv("./Clock ChIP targets/ELF4_ezer_targets.csv")
+  distinct(gene_ID) %>%
+  write_csv("./01_tidy_data/ELF4_ezer_targets.csv")
 
 
 merge_TF_clock <- function(df, clock_id){
@@ -338,7 +329,6 @@ TF_liu_merge <- merge_TF_clock(liu, 'PRR7')
 TF_ezer_LUX_merge <- merge_TF_clock(ezer_LUX, 'LUX')
 TF_ezer_ELF3_merge <- merge_TF_clock(ezer_ELF3, 'ELF3')
 TF_ezer_ELF4_merge <- merge_TF_clock(ezer_ELF4, 'ELF4')
-
 
 
 clock_clusters <- function(df_clock, df_clusters, label){
@@ -481,70 +471,70 @@ LHY_bind_d1d2 <- bind_rows(LHY_gain_high_d1d2, LHY_gain_medium_d1d2, LHY_lose_hi
 
 names(LHY_bind_d1d2)[3] <- "LHY"
 
-table(LHY_bind_d1d2$type)
+write_csv(LHY_bind_d1d2, './01_tidy_data/LHY_targets_d1d2.csv')
 
 # CCA1-Nagel amp_gain_high (69 obs) + CCA1-Nagel amp_gain_medium (151 obs) + CCA1-Nagel amp_lose_high (97 obs) + CCA1-Nagel amp_lose_medium (33 obs) + CCA1-Nagel amp_other (183 obs): total equals 533 obs
 CCA1_nagel_bind_d1d2 <- bind_rows(CCA1_nagel_gain_high_d1d2, CCA1_nagel_gain_medium_d1d2, CCA1_nagel_lose_high_d1d2, CCA1_nagel_lose_medium_d1d2, CCA1_nagel_other_d1d2)
 
 names(CCA1_nagel_bind_d1d2)[3] <- "CCA1 Nagel"
 
-table(CCA1_nagel_bind_d1d2$type)
+write_csv(CCA1_nagel_bind_d1d2, './01_tidy_data/CCA1_nagel_bind_d1d2.csv')
 
 # CCA1-Kamioka amp_gain_high (37 obs) + CCA1-Kamioka amp_gain_medium (59 obs) + CCA1-Kamioka amp_lose_high (24 obs) + CCA1-Kamioka amp_lose_medium (14 obs) + CCA1-Kamioka amp_other (68 obs): total equals 202 obs
 CCA1_kamioka_bind_d1d2 <- bind_rows(CCA1_kamioka_gain_high_d1d2, CCA1_kamioka_gain_medium_d1d2, CCA1_kamioka_lose_high_d1d2, CCA1_kamioka_lose_medium_d1d2, CCA1_kamioka_other_d1d2)
 
 names(CCA1_kamioka_bind_d1d2)[3] <- "CCA1 Kamioka"
 
-table(CCA1_kamioka_bind_d1d2$type)
+write_csv(CCA1_kamioka_bind_d1d2, './01_tidy_data/CCA1_kamioka_bind_d1d2.csv')
 
 # CCA1-Nagel-Kamioka amp_gain_high (22 obs) + CCA1-Nagel-Kamioka amp_gain_medium (44 obs) + CCA1-Nagel-Kamioka amp_lose_high (10 obs) + CCA1-Nagel-Kamioka amp_lose_medium (7 obs) + CCA1-Nagel-Kamioka amp_other (50 obs): total equals 133 obs
 CCA1_nagel_kamioka_bind_d1d2 <- bind_rows(CCA1_nagel_kamioka_gain_high_d1d2, CCA1_nagel_kamioka_gain_medium_d1d2, CCA1_nagel_kamioka_lose_high_d1d2, CCA1_nagel_kamioka_lose_medium_d1d2, CCA1_nagel_kamioka_other_d1d2)
 
 names(CCA1_nagel_kamioka_bind_d1d2)[3] <- "CCA1 Nagel-Kamioka"
 
-table(CCA1_nagel_kamioka_bind_d1d2$type)
+write_csv(CCA1_nagel_kamioka_bind_d1d2, './01_tidy_data/CCA1_nagel_kamioka_bind_d1d2.csv')
 
 # TOC1 amp_gain_high (79 obs) + TOC1 amp_gain_medium (73 obs) + TOC1 amp_lose_high (45 obs) + TOC1 amp_lose_medium (30 obs) + TOC1 amp_other (65 obs): total equals 292 obs
 TOC1_bind_d1d2 <- bind_rows(TOC1_gain_high_d1d2, TOC1_gain_medium_d1d2, TOC1_lose_high_d1d2, TOC1_lose_medium_d1d2, TOC1_other_d1d2)
 
 names(TOC1_bind_d1d2)[3] <- "TOC1"
 
-table(TOC1_bind_d1d2$type)
+write_csv(TOC1_bind_d1d2, './01_tidy_data/TOC1_bind_d1d2.csv')
 
 # PRR5 amp_gain_high (30 obs) + PRR5 amp_gain_medium (14 obs) + PRR5 amp_lose_high (2 obs) + PRR5 amp_lose_medium (4 obs) + PRR5 amp_other (6 obs): total equals 56 obs
 PRR5_bind_d1d2 <- bind_rows(PRR5_gain_high_d1d2, PRR5_gain_medium_d1d2, PRR5_lose_high_d1d2, PRR5_lose_medium_d1d2, PRR5_other_d1d2)
 
 names(PRR5_bind_d1d2)[3] <- "PRR5"
 
-table(PRR5_bind_d1d2$type)
+write_csv(PRR5_bind_d1d2, './01_tidy_data/PRR5_bind_d1d2.csv')
 
 # PRR7 amp_gain_high (29 obs) + PRR7 amp_gain_medium (10 obs) + PRR7 amp_lose_high (11 obs) + PRR7 amp_lose_medium (2 obs) + PRR7 amp_other (14 obs): total equals 66 obs
 PRR7_bind_d1d2 <- bind_rows(PRR7_gain_high_d1d2, PRR7_gain_medium_d1d2, PRR7_lose_high_d1d2, PRR7_lose_medium_d1d2, PRR7_other_d1d2)
 
 names(PRR7_bind_d1d2)[3] <- "PRR7"
 
-table(PRR7_bind_d1d2$type)
+write_csv(PRR7_bind_d1d2, './01_tidy_data/PRR7_bind_d1d2.csv')
 
 # LUX amp_gain_high (58 obs) + LUX amp_gain_medium (86 obs) + LUX amp_lose_high (103 obs) + LUX amp_lose_medium (42 obs) + LUX amp_other (103 obs): total equals 392 obs
 LUX_bind_d1d2 <- bind_rows(LUX_gain_high_d1d2, LUX_gain_medium_d1d2, LUX_lose_high_d1d2, LUX_lose_medium_d1d2, LUX_other_d1d2)
 
 names(LUX_bind_d1d2)[3] <- "LUX"
 
-table(LUX_bind_d1d2$type)
+write_csv(LUX_bind_d1d2, './01_tidy_data/LUX_bind_d1d2.csv')
 
 # ELF3 amp_gain_high (19 obs) + ELF3 amp_gain_medium (19 obs) + ELF3 amp_lose_high (44 obs) + ELF3 amp_lose_medium (11 obs) + ELF3 amp_other (27 obs): total equals 120 obs
 ELF3_bind_d1d2 <- bind_rows(ELF3_gain_high_d1d2, ELF3_gain_medium_d1d2, ELF3_lose_high_d1d2, ELF3_lose_medium_d1d2, ELF3_other_d1d2)
 
 names(ELF3_bind_d1d2)[3] <- "ELF3"
 
-table(ELF3_bind_d1d2$type)
+write_csv(ELF3_bind_d1d2, './01_tidy_data/ELF3_bind_d1d2.csv')
 
 # ELF4 amp_gain_high (8 obs) + ELF4 amp_gain_medium (3 obs) + ELF4 amp_lose_high (12 obs) + ELF4 amp_lose_medium (2 obs) + ELF4 amp_other (5 obs): total equals 30 obs
 ELF4_bind_d1d2 <- bind_rows(ELF4_gain_high_d1d2, ELF4_gain_medium_d1d2, ELF4_lose_high_d1d2, ELF4_lose_medium_d1d2, ELF4_other_d1d2)
 
 names(ELF4_bind_d1d2)[3] <- "ELF4"
 
-table(ELF4_bind_d1d2$type)
+write_csv(ELF4_bind_d1d2, './01_tidy_data/ELF4_bind_d1d2.csv')
 
 # * d1d5----
 # append all the LHY targets:
@@ -553,77 +543,76 @@ LHY_bind_d1d5 <- bind_rows(LHY_gain_high_d1d5, LHY_gain_medium_d1d5, LHY_lose_hi
 
 names(LHY_bind_d1d5)[3] <- "LHY"
 
-table(LHY_bind_d1d5$type)
+write_csv(LHY_bind_d1d5, './01_tidy_data/LHY_bind_d1d5.csv')
 
 # CCA1-Nagel amp_gain_high (0 obs) + CCA1-Nagel amp_gain_medium (26 obs) + CCA1-Nagel amp_lose_high (166 obs) + CCA1-Nagel amp_lose_medium (82 obs) + CCA1-Nagel amp_other (210 obs): total equals 484 obs
 CCA1_nagel_bind_d1d5 <- bind_rows(CCA1_nagel_gain_high_d1d5, CCA1_nagel_gain_medium_d1d5, CCA1_nagel_lose_high_d1d5, CCA1_nagel_lose_medium_d1d5, CCA1_nagel_other_d1d5)
 
 names(CCA1_nagel_bind_d1d5)[3] <- "CCA1 Nagel"
 
-table(CCA1_nagel_bind_d1d5$type)
+write_csv(CCA1_nagel_bind_d1d5, './01_tidy_data/CCA1_nagel_bind_d1d5.csv')
 
 # CCA1-Kamioka amp_gain_high (1 obs) + CCA1-Kamioka amp_gain_medium (6 obs) + CCA1-Kamioka amp_lose_high (53 obs) + CCA1-Kamioka amp_lose_medium (31 obs) + CCA1-Kamioka amp_other (88 obs): total equals 179 obs
 CCA1_kamioka_bind_d1d5 <- bind_rows(CCA1_kamioka_gain_high_d1d5, CCA1_kamioka_gain_medium_d1d5, CCA1_kamioka_lose_high_d1d5, CCA1_kamioka_lose_medium_d1d5, CCA1_kamioka_other_d1d5)
 
 names(CCA1_kamioka_bind_d1d5)[3] <- "CCA1 Kamioka"
 
-table(CCA1_kamioka_bind_d1d5$type)
+write_csv(CCA1_kamioka_bind_d1d5, './01_tidy_data/CCA1_kamioka_bind_d1d5.csv')
 
 # CCA1-Nagel-Kamioka amp_gain_high (0 obs) + CCA1-Nagel-Kamioka amp_gain_medium (4 obs) + CCA1-Nagel-Kamioka amp_lose_high (21 obs) + CCA1-Nagel-Kamioka amp_lose_medium (28 obs) + CCA1-Nagel-Kamioka amp_other (64 obs): total equals 117 obs
 CCA1_nagel_kamioka_bind_d1d5 <- bind_rows(CCA1_nagel_kamioka_gain_high_d1d5, CCA1_nagel_kamioka_gain_medium_d1d5, CCA1_nagel_kamioka_lose_high_d1d5, CCA1_nagel_kamioka_lose_medium_d1d5, CCA1_nagel_kamioka_other_d1d5)
 
 names(CCA1_nagel_kamioka_bind_d1d5)[3] <- "CCA1 Nagel-Kamioka"
 
-table(CCA1_nagel_kamioka_bind_d1d5$type)
+write_csv(CCA1_nagel_kamioka_bind_d1d5, './01_tidy_data/CCA1_nagel_kamioka_bind_d1d5.csv')
 
 # TOC1 amp_gain_high (0 obs) + TOC1 amp_gain_medium (13 obs) + TOC1 amp_lose_high (95 obs) + TOC1 amp_lose_medium (30 obs) + TOC1 amp_other (110 obs): total equals 248 obs
 TOC1_bind_d1d5 <- bind_rows(TOC1_gain_high_d1d5, TOC1_gain_medium_d1d5, TOC1_lose_high_d1d5, TOC1_lose_medium_d1d5, TOC1_other_d1d5)
 
 names(TOC1_bind_d1d5)[3] <- "TOC1"
 
-table(TOC1_bind_d1d5$type)
+write_csv(TOC1_bind_d1d5, './01_tidy_data/TOC1_bind_d1d5.csv')
 
 # PRR5 amp_gain_high (0 obs) + PRR5 amp_gain_medium (1 obs) + PRR5 amp_lose_high (6 obs) + PRR5 amp_lose_medium (5 obs) + PRR5 amp_other (31 obs): total equals 43 obs
 PRR5_bind_d1d5 <- bind_rows(PRR5_gain_high_d1d5, PRR5_gain_medium_d1d5, PRR5_lose_high_d1d5, PRR5_lose_medium_d1d5, PRR5_other_d1d5)
 
 names(PRR5_bind_d1d5)[3] <- "PRR5"
 
-table(PRR5_bind_d1d5$type)
+write_csv(PRR5_bind_d1d5, './01_tidy_data/PRR5_bind_d1d5.csv')
 
 # PRR7 amp_gain_high (0 obs) + PRR7 amp_gain_medium (3 obs) + PRR7 amp_lose_high (18 obs) + PRR7 amp_lose_medium (6 obs) + PRR7 amp_other (33 obs): total equals 60 obs
 PRR7_bind_d1d5 <- bind_rows(PRR7_gain_high_d1d5, PRR7_gain_medium_d1d5, PRR7_lose_high_d1d5, PRR7_lose_medium_d1d5, PRR7_other_d1d5)
 
 names(PRR7_bind_d1d5)[3] <- "PRR7"
 
-table(PRR7_bind_d1d5$type)
+write_csv(PRR7_bind_d1d5, './01_tidy_data/PRR7_bind_d1d5.csv')
 
 # LUX amp_gain_high (3 obs) + LUX amp_gain_medium (21 obs) + LUX amp_lose_high (181 obs) + LUX amp_lose_medium (43 obs) + LUX amp_other (116 obs): total equals 364 obs
 LUX_bind_d1d5 <- bind_rows(LUX_gain_high_d1d5, LUX_gain_medium_d1d5, LUX_lose_high_d1d5, LUX_lose_medium_d1d5, LUX_other_d1d5)
 
 names(LUX_bind_d1d5)[3] <- "LUX"
 
-table(LUX_bind_d1d5$type)
+write_csv(LUX_bind_d1d5, './01_tidy_data/LUX_bind_d1d5.csv')
 
 # ELF3 amp_gain_high (0 obs) + ELF3 amp_gain_medium (7 obs) + ELF3 amp_lose_high (59 obs) + ELF3 amp_lose_medium (16 obs) + ELF3 amp_other (31 obs): total equals 113 obs
 ELF3_bind_d1d5 <- bind_rows(ELF3_gain_high_d1d5, ELF3_gain_medium_d1d5, ELF3_lose_high_d1d5, ELF3_lose_medium_d1d5, ELF3_other_d1d5)
 
 names(ELF3_bind_d1d5)[3] <- "ELF3"
 
-table(ELF3_bind_d1d5$type)
+write_csv(ELF3_bind_d1d5, './01_tidy_data/ELF3_bind_d1d5.csv')
 
 # ELF4 amp_gain_high (0 obs) + ELF4 amp_gain_medium (0 obs) + ELF4 amp_lose_high (14 obs) + ELF4 amp_lose_medium (3 obs) + ELF4 amp_other (10 obs): total equals 27 obs
 ELF4_bind_d1d5 <- bind_rows(ELF4_gain_high_d1d5, ELF4_gain_medium_d1d5, ELF4_lose_high_d1d5, ELF4_lose_medium_d1d5, ELF4_other_d1d5)
 
 names(ELF4_bind_d1d5)[3] <- "ELF4"
 
-table(ELF4_bind_d1d5$type)
-
+write_csv(ELF4_bind_d1d5, './01_tidy_data/ELF4_bind_d1d5.csv')
 
 summarise_targets <- function(df, col_str, clock_id){
   
   summary <- df %>% 
     group_by({{col_str}}) %>% 
-    summarise(n=n()) %>% 
+    dplyr::summarise(n=n()) %>% 
     mutate(freq = (n/sum(n) *100)) %>% 
     mutate(clock = {{clock_id}})
   
