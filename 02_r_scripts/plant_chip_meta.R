@@ -58,17 +58,17 @@ meta2d(infile = './01_tidy_data/clusters_aggregated_day5.csv', filestyle = 'csv'
        timepoints = seq(0, 24, by = 3))
 
 # read back in the meta2d output file with selected columns
-day1_output <- read_csv('./cluster_days_output_day1/meta2d_clusters_aggregated_day1.csv') %>% 
+day1_output <- read_csv('./00_raw_data/cluster_days_output_day1/meta2d_clusters_aggregated_day1.csv') %>% 
   select(CycID, meta2d_pvalue, meta2d_period, meta2d_phase, meta2d_AMP) %>% 
-  rename(cluster = CycID, d1_meta2d_pvalue = meta2d_pvalue, d1_meta2d_period = meta2d_period, d1_meta2d_phase = meta2d_phase, d1_meta2d_AMP = meta2d_AMP)
+  dplyr::rename(cluster = CycID, d1_meta2d_pvalue = meta2d_pvalue, d1_meta2d_period = meta2d_period, d1_meta2d_phase = meta2d_phase, d1_meta2d_AMP = meta2d_AMP)
 
-day2_output <- read_csv('./cluster_days_output_day2/meta2d_clusters_aggregated_day2.csv') %>% 
+day2_output <- read_csv('./00_raw_data/cluster_days_output_day2/meta2d_clusters_aggregated_day2.csv') %>% 
   select(CycID, meta2d_pvalue, meta2d_period, meta2d_phase, meta2d_AMP) %>% 
-  rename(cluster = CycID, d2_meta2d_pvalue = meta2d_pvalue, d2_meta2d_period = meta2d_period, d2_meta2d_phase = meta2d_phase, d2_meta2d_AMP = meta2d_AMP)
+  dplyr::rename(cluster = CycID, d2_meta2d_pvalue = meta2d_pvalue, d2_meta2d_period = meta2d_period, d2_meta2d_phase = meta2d_phase, d2_meta2d_AMP = meta2d_AMP)
 
-day5_output <- read_csv('./cluster_days_output_day5/meta2d_clusters_aggregated_day5.csv') %>% 
+day5_output <- read_csv('./00_raw_data/cluster_days_output_day5/meta2d_clusters_aggregated_day5.csv') %>% 
   select(CycID, meta2d_pvalue, meta2d_period, meta2d_phase, meta2d_AMP) %>% 
-  rename(cluster = CycID, d5_meta2d_pvalue = meta2d_pvalue, d5_meta2d_period = meta2d_period, d5_meta2d_phase = meta2d_phase, d5_meta2d_AMP = meta2d_AMP)
+  dplyr::rename(cluster = CycID, d5_meta2d_pvalue = meta2d_pvalue, d5_meta2d_period = meta2d_period, d5_meta2d_phase = meta2d_phase, d5_meta2d_AMP = meta2d_AMP)
 
 # compare d1 vs d2 and set rules for classifying amplitude and rhythm changes between days
 # _150 means 1.5 fold up or down difference in amplitude
@@ -104,7 +104,7 @@ day1_vs_day2_150 <- full_join(day1_output, day2_output, by = "cluster") %>%
   mutate(cluster_id = as.character(paste(1:74))) %>% 
   relocate(cluster_id)
 
-write_csv(day1_vs_day2_150, 'day1_vs_day2_150.csv')
+write_csv(day1_vs_day2_150, './01_tidy_data/day1_vs_day2_150.csv')
 
 # compare d1 vs d5 and set rules for classifying amplitude and rhythm changes between days
 # _150 means 1.5 fold up or down difference in amplitude
@@ -140,18 +140,16 @@ day1_vs_day5_150 <- full_join(day1_output, day5_output, by = "cluster") %>%
   mutate(cluster_id = as.character(paste(1:74))) %>% 
   relocate(cluster_id)
 
-write_csv(day1_vs_day5_150, 'day1_vs_day5_150.csv')
+write_csv(day1_vs_day5_150, './01_tidy_data/day1_vs_day5_150.csv')
 
 # Scatter plot of the MetaCycle outputs for Amplitude coloured by the amp_flag grouping
 plot_day1_vs_day2_150_AMP <- day1_vs_day2_150 %>% 
-  #filter(d1_meta2d_AMP > 0.5 & d2_meta2d_AMP > 0.5) %>% 
   filter(pval_flag == 'd1_nr_d2_r' | pval_flag == 'd1_r_d2_nr' | pval_flag == 'd1_r_d2_r') %>%
   ggplot(aes(x = d1_meta2d_AMP, y = d2_meta2d_AMP, colour = amp_flag, shape = pval_flag)) +
   scale_y_continuous(limits = c(0, 1.6), breaks = c(0, 0.4, 0.8, 1.2, 1.6)) +
   scale_x_continuous(limits = c(0, 1.8), breaks = c(0, 0.4, 0.8, 1.2, 1.6)) +
   geom_point(size = 2.5) +
   ggpubr::theme_pubr() +
-  #ggpubr::theme_pubclean() +
   theme(legend.position = "right", legend.key = element_blank()) +
   scale_colour_brewer(palette = "Set1", labels = c("gain - high", "gain - medium", "lose - high", "lose - medium", "other")) +
   geom_text_repel(aes(label = cluster_id), show.legend = FALSE) +
@@ -163,15 +161,15 @@ plot_day1_vs_day2_150_AMP <- day1_vs_day2_150 %>%
         plot.subtitle = element_text(color = "grey30")
   )
 
+ggsave('./03_plots/plot_day1_vs_day2_150_AMP.png', dpi = 300, height = 6, width = 6, units = 'in')
+
 plot_day1_vs_day5_150_AMP <- day1_vs_day5_150 %>%
-  #filter(d1_meta2d_AMP > 0.5 & d2_meta2d_AMP > 0.5) %>% 
   filter(pval_flag == 'd1_nr_d5_r' | pval_flag == 'd1_r_d5_nr' | pval_flag == 'd1_r_d5_r') %>%
   ggplot(aes(x = d1_meta2d_AMP, y = d5_meta2d_AMP, colour = amp_flag, shape = pval_flag)) +
   scale_y_continuous(limits = c(0, 1.6), breaks = c(0, 0.4, 0.8, 1.2, 1.6)) +
   scale_x_continuous(limits = c(0, 1.8), breaks = c(0, 0.4, 0.8, 1.2, 1.6)) +
   geom_point(size = 2.5) +
   ggpubr::theme_pubr() +
-  #ggpubr::theme_pubclean() +
   theme(legend.position = "right", legend.key = element_blank()) +
   scale_colour_brewer(palette = "Set1", labels = c("gain - high", "gain - medium", "lose - high", "lose - medium", "other")) +
   geom_text_repel(aes(label = cluster_id), show.legend = FALSE) +
@@ -182,6 +180,8 @@ plot_day1_vs_day5_150_AMP <- day1_vs_day5_150 %>%
   theme(plot.title = element_text(color = "grey30"),
         plot.subtitle = element_text(color = "grey30")
   )
+
+ggsave('./03_plots/plot_day1_vs_day5_150_AMP.png', dpi = 300, height = 6, width = 6, units = 'in')
 
 
 get_clusters <- function(df, filter_col, amp_flag_id){
@@ -208,22 +208,18 @@ amp_lose_high_clusters_d1_d5 <- get_clusters(day1_vs_day5_150, amp_flag, 'lose_h
 amp_lose_medium_clusters_d1_d5 <- get_clusters(day1_vs_day5_150, amp_flag, 'lose_medium')
 amp_other_clusters_d1_d5 <- get_clusters(day1_vs_day5_150, amp_flag, 'other')
 
-
-## An analysis of established and published Arabidopsis clock ChIP targets in TF network
-
+# An analysis of established and published Arabidopsis clock ChIP targets in TF network
 # read the TF network cluster
 # The TF network is 7302 genes over 75 clusters (clusters 0-74)
 
-#setwd('/Users/Allan/Documents/Post crash 2016/Home laptop June 2013/Research/Splicing II/Network/Clock ChIP datasets/Clock_ChIP_datasets/')
-
-TF <- read_csv("TF Network Cluster Nov2018.csv") %>%
+TF <- read_csv("./00_raw_data/TF Network Cluster Nov2018.csv") %>%
   pivot_longer(cols = starts_with ('cluster'),
                names_to = "cluster", 
                values_to = "gene_ID",
                values_drop_na = TRUE) %>% 
   filter(grepl('AT', gene_ID)) %>%
   mutate(cluster = str_sub(cluster, 9, -1)) %>% 
-  write_csv("TF Network Cluster Nov2018 pivot longer.csv")
+  write_csv("./01_tidy_data/TF Network Cluster Nov2018 pivot longer.csv")
 
 # LHY dataset
 # read in the Adams LHY paper dataset and skip first 2 lines
