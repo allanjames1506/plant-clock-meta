@@ -1,0 +1,13 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# ignore dataset folder and subfolders
+00_raw_data/
+01_tidy_data/
+03_plots/
+04_reports/
+
+# other file types
+*.pptx
