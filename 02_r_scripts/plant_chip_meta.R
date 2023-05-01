@@ -661,7 +661,9 @@ plot_clock_d1d2 <- clock_d1_d2 %>%
   geom_bar(position = 'stack', stat = 'identity') +
   ggpubr::theme_pubr() +
   theme(legend.position = "right") +
-  labs(fill = 'Amplitude')
+  labs(fill = 'Amplitude', y = 'Proportion (%)') +
+  ggtitle("Amplitude patterns for clock targets",
+          subtitle = "Compare day 1 (20C steady state) with day 2 (to 4C transient-cooling)") 
 
 plot_clock_d1d2
 
@@ -669,63 +671,13 @@ plot_clock_d1d5 <- clock_d1_d5 %>%
   mutate(type = factor(type, levels = c('gain_high_d1_d5', 'gain_medium_d1_d5', 'other_d1_d5', 'lose_medium_d1_d5', 'lose_high_d1_d5')),
          clock = factor(clock, levels = c('CCA1', 'LHY', 'TOC1', 'PRR5', 'PRR7', 'LUX', 'ELF3', 'ELF4'))) %>% 
   ggplot(aes(x = clock, y = freq, fill = type)) +
-  geom_bar(position = 'stack', stat = 'identity')
-
+  scale_y_continuous(limits = c(0, 100), breaks = c(0, 20, 40, 60, 80, 100)) +
+  scale_fill_manual(values = c('#31a354', '#74c476', '#cccccc', '#fb6a4a', '#de2d26'), labels = c('gain - high', 'gain - medium', 'other', 'lose - medium', 'lose - high')) +
+  geom_bar(position = 'stack', stat = 'identity') +
+  ggpubr::theme_pubr() +
+  theme(legend.position = "right") +
+  labs(fill = 'Amplitude', y = 'Proportion (%)') +
+  ggtitle("Amplitude patterns for clock targets",
+          subtitle = "Compare day 1 (20C steady state) with Day 5 (4C steady state)") 
 
 plot_clock_d1d5
-
-TF_clock_summary <-
-  bind_rows(TF_LHY_amp_append_summary, TF_CCA1_amp_append_summary, TF_TOC1_amp_append_summary, TF_PRR5_amp_append_summary,
-            TF_PRR7_amp_append_summary, TF_LUX_amp_append_summary, TF_ELF3_amp_append_summary, TF_ELF4_amp_append_summary) %>% 
-  mutate(order_type = case_when(type == 'gain_high_d1_d2' ~ 1,
-                                type == 'gain_medium_d1_d2' ~ 2,
-                                type == 'other_d1_d2' ~ 3,
-                                type == 'lose_medium_d1_d2' ~ 4,
-                                TRUE ~ 5),
-         order_clock = case_when(clock == 'CCA1' ~ 1,
-                                 clock == 'LHY' ~ 2,
-                                 clock == 'PRR5' ~ 3,
-                                 clock == 'PRR7' ~ 4,
-                                 clock == 'TOC1' ~ 5,
-                                 clock == 'LUX' ~ 6,
-                                 clock == 'ELF3' ~ 7,
-                                 TRUE ~ 8),
-         type = factor(type),
-         clock = factor(clock),
-         type = fct_reorder(type, order_type, min),
-         clock = fct_reorder(clock, order_clock, min)) %>% 
-  ggplot(aes(fill = type, y = freq, x = clock)) +
-  geom_col() 
-#+geom_bar(position="stack", stat="identity")
-
-TF_clock_summary
-
-glimpse(TF_clock_summary)
-
-#%>%
-summarise(mean = mean)
-group_by(clock, type)
-mutate(type = factor(type),
-       type = fct_reorder(type))
-
-TF_clock_summary %>% 
-  group_by(type) %>% 
-  summarise(max = max(freq)) %>% 
-  arrange(desc(max))
-
-clock_rel_abund <-TF_clock_summary %>% 
-  group_by(clock) %>% 
-  summarize(max = max(freq))
-
-TF_clock_summary <- as.factor(TF_clock_summary$clock, levels = c('LHY', 'CCA1', 'TOC1', 'PRR5', 'PRR7', 'LUX', 'ELF3', 'ELF4'))
-
-TF_clock_summary_bar_plot <-
-  ggplot(TF_clock_summary, aes(fill=factor(type, levels=c("gain_high_d1_d2", "gain_medium_d1_d2", "lose_high_d1_d2", "lose_medium_d1_d2", "other_d1_d2")), y=freq,
-                               x=factor(clock, levels = c('LHY', 'CCA1', 'TOC1', 'PRR5', 'PRR7', 'LUX', 'ELF3', 'ELF4')))) +
-  geom_bar(position="stack", stat="identity")
-
-TF_clock_summary_bar_plot2 <-
-  ggplot(TF_clock_summary, aes(fill = type, y = freq, x = clock)) +
-  geom_bar(position="stack", stat="identity")
-
-TF_clock_summary_bar_plot2
