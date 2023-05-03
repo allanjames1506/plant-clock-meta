@@ -1,0 +1,279 @@
+---
+title: "Clock ChIP Meta Analysis"
+author: "Allan James"
+format: 
+  html:
+    code-fold: true
+    code-tools: true
+    default-image-extension: png
+toc: true
+number-sections: true
+editor: visual
+bibliography: references.bib
+---
+
+## Introduction
+
+```{r pre-setup, message=FALSE, warning=FALSE, echo=F}
+
+install.packages(setdiff("pacman", rownames(installed.packages())))
+library("pacman")
+p_load(tidyr, readr, ggplot2, dplyr, janitor, MetaCycle, ggbiplot, ggrepel, stringr, purrr)
+
+```
+
+The circadian clock is a molecular timekeeping system that provides organisms with a mechanism to adapt to 24-h day/night cycles. The clock activates biological processes at specific times of the day, such as preparing for colder temperatures in the evening.
+
+In Arabidopsis thaliana, transcription and translation feedback loops among clock-associated genes are required to maintain circadian clock functionality. There are now a number of 'Chromatin immunoprecipitation followed by deep sequencing' (ChIP-seq) datasets related to the circadian clock in Arabidopsis blah blah blah [@calixto2018a]
+
+## TF-network clusters
+
+::: {#fig-TFclusters layout-ncol="1"}
+![TF clusters 1-30](./00_raw_data/TFcluster_profiles1){#fig-1-30}
+
+![TF clusters 31-60](./00_raw_data/TFcluster_profiles2){#fig-31-60}
+
+![TF clusters 61-74](./00_raw_data/TFcluster_profiles3){#fig-61-74}
+
+TF z-score cluster profiles
+:::
+
+::: panel-tabset
+#### Clusters 1-30
+
+![](./00_raw_data/TFcluster_profiles1)
+
+#### Clusters 31-60
+
+![](./00_raw_data/TFcluster_profiles2)
+
+#### Clusters 61-74
+
+![](./00_raw_data/TFcluster_profiles3)
+
+TF z-score cluster profiles
+:::
+
+## Cluster rhythmicity patterns
+
+[WebPlotDigitizer](https://apps.automeris.io/wpd/) was used to recover three-hourly z-score data point values from the TF cluster plots. The meta2d function from the [MetaCycle](https://cran.r-project.org/web/packages/MetaCycle/MetaCycle.pdf) package[@wu2016] was then used to detect rhythmic signals from the z-score cluster profiles.
+
+```{mermaid}
+%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '12px', 'fontFamily': 'Arial'}}}%%
+flowchart TD
+A([Calixto et al. 2018 <br>temp & time-series RNA-seq <br>clusters 0-74]) --> |split|B(d1: 20C 'steady state' <br> d2: 20 to 4C 'cooling transition' <br> d5: 4C 'steady state') --> |rhythmic signals|C(MetaCycle <br>amplitude & rhythm<br>detection) -->|score|D(rhythm: meta2d_pval score<br>r = rhythmic, pval <= 0.05 <br>nr = non-rhythmic, pval > 0.05 <br>amplitude: meta_2d_AMP score)
+    style A fill:#FDF1D5,stroke:#333,stroke-width:2px
+    style B fill:#FDF1D5,stroke:#333,stroke-width:2px
+    style C fill:#FDF1D5,stroke:#333,stroke-width:2px
+    style D fill:#FDF1D5,stroke:#333,stroke-width:2px
+    D --> |compare|E(d1 vs d2<br>'transition')
+    style E fill:#FDF1D5,stroke:#333,stroke-width:2px
+    D --> |compare|F(d1 vs d5<br>'acclimated')
+    style F fill:#FDF1D5,stroke:#333,stroke-width:2px
+    E --> |rhythms|G(d1r_d2r 'maintain'<br>d1nr_d2r 'gain'<br>d1r_d2nr 'lose')
+    style G fill:#FDF1D5,stroke:#333,stroke-width:2px
+    F --> |rhythms|H(d1r_d5r 'maintain'<br>d1nr_d5r 'gain'<br>d1r_d5nr 'lose')
+    style H fill:#FDF1D5,stroke:#333,stroke-width:2px
+    E --> |amplitude|I(d2_AMP/d1_AMP >3 'gain high'<br>d2_AMP/d1_AMP => 1.5 & <= 3 'gain medium'<br>d2_AMP/d1_AMP > 0.33 & <= 0.67 'lose medium'<br>d2_AMP/d1_AMP <= 0.33 'lose high')
+    style I fill:#FDF1D5,stroke:#333,stroke-width:2px
+    F --> |amplitude|J(d5_AMP/d1_AMP >3 'gain high'<br>d5_AMP/d1_AMP => 1.5 & <= 3 'gain medium'<br>d5_AMP/d1_AMP > 0.33 & <= 0.67 'lose medium'<br>d5_AMP/d1_AMP <= 0.33 'lose high')
+    style J fill:#FDF1D5,stroke:#333,stroke-width:2px   
+
+```
+
+We then did this, this and this
+
+::: panel-tabset
+#### Day 1 vs Day 2 Cluster Amplitudes
+
+![](./03_plots/plot_day1_vs_day2_150_AMP)
+
+#### Day 1 vs Day 5 Cluster Amplitudes
+
+![](./03_plots/plot_day1_vs_day5_150_AMP)
+
+Scatter plots of cluster amplitude profiles dynamic and steady-state temperature challenge
+:::
+
+```{r load-TF-ChIP-data, message=FALSE, warning=FALSE, echo=F}
+
+# An analysis of established and published Arabidopsis clock ChIP targets in TF network
+# read the TF network cluster
+# The TF network is 7302 genes over 75 clusters (clusters 0-74)
+TF <- read_csv("./00_raw_data/TF Network Cluster Nov2018.csv") %>%
+  pivot_longer(cols = starts_with ('cluster'),
+               names_to = "cluster", 
+               values_to = "gene_ID",
+               values_drop_na = TRUE) %>% 
+  filter(grepl('AT', gene_ID)) %>%
+  mutate(cluster = str_sub(cluster, 9, -1))
+
+# LHY dataset
+# read in the Adams LHY paper dataset and skip first 2 lines
+# The LHY paper is Adams et al. (2018) New Phytologist 220(3); 897
+# supplemental data set (Table S2)
+adams <- read_csv("./00_raw_data/nph15415-sup-0002-tables2.csv",skip=2) %>% 
+  dplyr::select(gene_ID = 1) %>%
+  filter(!is.na(gene_ID)) %>%
+  distinct(gene_ID)
+
+# find the common features of TF and adams based on the gene_ID column
+TF_adams_merge <-inner_join (TF, adams, by = "gene_ID") %>% 
+  arrange(nchar(cluster), cluster) %>% 
+  mutate(clock = 'LHY')
+
+# CCA1 Nagel et al. dataset
+# read in the Nagel CCA1 paper dataset and skip first 2 lines
+# The CCA1 paper is Nagel et al. (2015) PNAS 112(34); E4802
+# supplemental data set (Table S1) 
+nagel <- read_csv("./00_raw_data/pnas.1513609112.sd01.csv",skip=2) %>% 
+  dplyr::select(gene_ID = 10) %>% 
+  mutate(gene_ID = str_sub(gene_ID, end = 9)) %>% 
+  distinct(gene_ID) 
+
+# find the common features of TF and nagel based on the gene_ID column
+TF_nagel_merge <-inner_join (TF, nagel, by = "gene_ID") %>% 
+  arrange(nchar(cluster), cluster) %>% 
+  mutate(clock = 'CCA1') 
+
+# CCA1 Kamioka et al. dataset
+# read in the Kamioka CCA1 paper dataset and skip first 2 lines
+# The CCA1 paper is Kamioka et al. (2016) Plant Cell 28(3); 696
+# supplemental data set (Table S1C)
+kamioka <- read_csv("./00_raw_data/TPC2015-00737-RAR3_Supplemental_Data_Set_1C.csv",skip=3) %>% 
+  dplyr::select(gene_ID = 10) %>% 
+  distinct(gene_ID) 
+
+# find the common features of TF and nagel based on the gene_ID column
+TF_kamioka_merge <- inner_join (TF, kamioka, by = "gene_ID") %>% 
+  arrange(nchar(cluster), cluster) %>% 
+  mutate(clock = 'CCA1') 
+
+# merge the nagel and kamioka CCA1 datasets
+# use inner_join from dplyr
+# 249 obs.
+kamioka_nagel_merge <- inner_join(nagel, kamioka, by = "gene_ID")
+
+# find the common features of TF and kamioka-nagel based on the gene_ID column
+# use inner_join from dplyr
+# 143 obs.
+TF_kamioka_nagel_merge <- inner_join(TF, kamioka_nagel_merge, by = "gene_ID") %>% 
+  arrange(nchar(cluster), cluster) %>% 
+  mutate(clock = 'CCA1') 
+
+# TOC1 dataset
+# read in the Huang TOC1 paper dataset
+# The TOC1 paper is Huang et al. (2012) Science 336:75
+# supplemental data set (Table S1)
+huang <- read_csv("./00_raw_data/Huang TOC1 CHiP TableS1.csv") %>% 
+  dplyr::select(gene_ID = 14) %>% 
+  distinct(gene_ID) 
+
+# find the common features of TF and huang on the gene_ID column
+TF_huang_merge <-inner_join (TF, huang, by = "gene_ID") %>% 
+  arrange(nchar(cluster), cluster) %>% 
+  mutate(clock = 'TOC1') 
+
+# PRR5 dataset
+# read in the Nakamichi PRR5 paper dataset
+# The PRR5 paper is Nakamichi et al. (2012) PNAS 109:17123
+# supplemental data set (Table S3) 
+nakamichi <- read_csv("./00_raw_data/Dataset S3 Nakamichi et al PRR5 binding targets PNAS 2012.csv", skip=2) %>% 
+  dplyr::select(gene_ID = 3) %>% 
+  distinct(gene_ID) 
+
+# find the common features of TF and nakamichi on the gene_ID column
+TF_nakamichi_merge <-inner_join (TF, nakamichi, by = "gene_ID") %>% 
+  arrange(nchar(cluster), cluster) %>% 
+  mutate(clock = 'PRR5') 
+
+# PRR7 dataset
+# read in the Liu PRR7 paper dataset
+# The PRR7 paper is Liu et al. (2013) The Plant Journal 76:101
+# supplemental data set (Table S1)
+liu <- read_csv("./00_raw_data/Dataset S1 Liu et al PRR7 edit.csv") %>% 
+  dplyr::select(gene_ID = 17) %>% 
+  distinct(gene_ID) 
+
+# find the common features of TF and liu on the gene_ID column
+TF_liu_merge <-inner_join (TF, liu, by = "gene_ID") %>% 
+  arrange(nchar(cluster), cluster) %>% 
+  mutate(clock = 'PRR7') 
+
+# LUX dataset
+# read in the Ezer EC paper for the LUX dataset (LUX_17 tab)
+# The Evening Complex (EC) paper is Ezer et al. (2017) Nature Plants 3: article 17087
+# supplemental data set (LUX_17 tab of Table S6) 
+ezer_LUX <- read_csv("./00_raw_data/Ezer et al nplants Suppl Table S6.csv") %>% 
+  dplyr::select(gene_ID = 1) %>% 
+  distinct(gene_ID) 
+
+# find the common features of TF and ezer_LUX on the gene_ID column
+TF_ezer_LUX_merge <-inner_join (TF, ezer_LUX, by = "gene_ID") %>% 
+  arrange(nchar(cluster), cluster) %>% 
+  mutate(clock = 'LUX') 
+
+# ELF3 dataset
+# read in the Ezer EC paper for the ELF3 dataset (ELF3_22 tab)
+# The Evening Complex (EC) paper is Ezer et al. (2017) Nature Plants 3: article 17087
+# supplemental data set (ELF3_22 tab of Table S6) 
+ezer_ELF3 <- read_csv("./00_raw_data/ELF3_22 Ezer Table S6.csv") %>% 
+  dplyr::select(gene_ID = 1) %>% 
+  distinct(gene_ID) 
+
+# find the common features of TF and ezer_ELF3 on the gene_ID column
+TF_ezer_ELF3_merge <-inner_join (TF, ezer_ELF3, by = "gene_ID") %>% 
+  arrange(nchar(cluster), cluster) %>% 
+  mutate(clock = 'ELF3') 
+
+# ELF4 dataset
+# read in the Ezer EC paper for the ELF4 dataset (ELF4_22 tab)
+# The Evening Complex (EC) paper is Ezer et al. (2017) Nature Plants 3: article 17087
+# supplemental data set (ELF4_22 tab of Table S6) 
+ezer_ELF4 <- read_csv("./00_raw_data/ELF4_22 Ezer Table S6.csv") %>% 
+  dplyr::select(gene_ID = 1) %>% 
+  distinct(gene_ID) 
+
+# find the common features of TF and ezer_ELF4 on the gene_ID column
+TF_ezer_ELF4_merge <-inner_join (TF, ezer_ELF4, by = "gene_ID") %>% 
+  arrange(nchar(cluster), cluster) %>% 
+  mutate(clock = 'ELF4') 
+
+```
+
+|           *trans* factor            |   Publication    |         Dataset         |  Epitope   | No. of *cis* targets |                                     No. (%) in the TF network                                     |
+|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|
+|   LATE ELONGATED HYPOCOTYL (LHY)    |   [@adams2018]   |        Table S2         | native LHY |   `r nrow(adams)`    |       `r nrow(TF_adams_merge)` (`r sprintf("%.1f", nrow(TF_adams_merge)/nrow(adams)*100)`%)       |
+| CIRCADIAN CLOCK ASSOCIATED-1 (CCA1) |   [@nagel2015]   |        Table S1         |  GFP-CCA1  |   `r nrow(nagel)`    |       `r nrow(TF_nagel_merge)` (`r sprintf("%.1f", nrow(TF_nagel_merge)/nrow(nagel)*100)`%)       |
+| CIRCADIAN CLOCK ASSOCIATED-1 (CCA1) |  [@kamioka2016]  |        Table S1C        | CCA1-FLAG  |  `r nrow(kamioka)`   |    `r nrow(TF_kamioka_merge)` (`r sprintf("%.1f", nrow(TF_kamioka_merge)/nrow(kamioka)*100)`%)    |
+|  TIMING OF CAB2 EXPRESSION1 (TOC1)  |   [@huang2012]   |        Table S1         |  TOC1-YFP  |   `r nrow(huang)`    |       `r nrow(TF_huang_merge)` (`r sprintf("%.1f", nrow(TF_huang_merge)/nrow(huang)*100)`%)       |
+|         LUX ARRYTHMO (LUX)          |   [@ezer2017]    | LUX_17 tab of Table S6  |  LUX-GFP   |  `r nrow(ezer_LUX)`  |  `r nrow(TF_ezer_LUX_merge)` (`r sprintf("%.1f", nrow(TF_ezer_LUX_merge)/nrow(ezer_LUX)*100)`%)   |
+|       EARLY FLOWERING3 (ELF3)       |   [@ezer2017]    | ELF3_22 tab of Table S6 |  ELF3-MYC  | `r nrow(ezer_ELF3)`  | `r nrow(TF_ezer_ELF3_merge)` (`r sprintf("%.1f", nrow(TF_ezer_ELF3_merge)/nrow(ezer_ELF3)*100)`%) |
+|       EARLY FLOWERING4 (ELF4)       |   [@ezer2017]    | ELF4_22 tab of Table S6 |  ELF4-HA   | `r nrow(ezer_ELF4)`  | `r nrow(TF_ezer_ELF4_merge)` (`r sprintf("%.1f", nrow(TF_ezer_ELF4_merge)/nrow(ezer_ELF4)*100)`%) |
+|  PSEUDO-RESPONSE REGULATOR7 (PRR7)  |    [@liu2013]    |       Dataset S1        |  HA-PRR7   |    `r nrow(liu)`     |          `r nrow(TF_liu_merge)` (`r sprintf("%.1f", nrow(TF_liu_merge)/nrow(liu)*100)`%)          |
+|  PSEUDO-RESPONSE REGULATOR5 (PRR5)  | [@nakamichi2012] |        Table S3         | PRR5-FLAG  | `r nrow(nakamichi)`  | `r nrow(TF_nakamichi_merge)` (`r sprintf("%.1f", nrow(TF_nakamichi_merge)/nrow(nakamichi)*100)`%) |
+
+: Arabidopsis Clock ChIP data-sets and their overlap with the cold TF network [@calixto2018a] {#tbl-Clock ChIP data-sets}
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+## References {.unnumbered}

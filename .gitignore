@@ -8,6 +8,9 @@
 01_tidy_data/
 03_plots/
 04_reports/
+Clock_ChIP_meta_analysis_files
 
 # other file types
 *.pptx
+*.html
+*.bib
