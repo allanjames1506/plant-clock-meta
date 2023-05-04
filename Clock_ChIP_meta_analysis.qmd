@@ -6,6 +6,7 @@ format:
     code-fold: true
     code-tools: true
     default-image-extension: png
+    embed-resources: true
 toc: true
 number-sections: true
 editor: visual
