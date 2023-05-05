@@ -667,6 +667,8 @@ plot_clock_d1d2 <- clock_d1_d2 %>%
 
 plot_clock_d1d2
 
+ggsave('./03_plots/plot_clock_d1d2.png', dpi = 300, height = 6, width = 6, units = 'in')
+
 plot_clock_d1d5 <- clock_d1_d5 %>% 
   mutate(type = factor(type, levels = c('gain_high_d1_d5', 'gain_medium_d1_d5', 'other_d1_d5', 'lose_medium_d1_d5', 'lose_high_d1_d5')),
          clock = factor(clock, levels = c('CCA1', 'LHY', 'TOC1', 'PRR5', 'PRR7', 'LUX', 'ELF3', 'ELF4'))) %>% 
@@ -681,3 +683,91 @@ plot_clock_d1d5 <- clock_d1_d5 %>%
           subtitle = "Compare day 1 (20C steady state) with Day 5 (4C steady state)") 
 
 plot_clock_d1d5
+
+ggsave('./03_plots/plot_clock_d1d5.png', dpi = 300, height = 6, width = 6, units = 'in')
+
+# circular barplot----
+# d1d2----
+
+gain_amp_high_d1d2 <- amp_gain_high_clusters_d1_d2 %>% 
+  mutate(group = 'gain high')
+
+gain_amp_med_d1d2 <- amp_gain_medium_clusters_d1_d2 %>% 
+  mutate(group = 'gain medium')
+
+lose_amp_high_d1d2 <- amp_lose_high_clusters_d1_d2 %>% 
+  mutate(group = 'lose high')
+
+lose_amp_med_d1d2 <- amp_lose_medium_clusters_d1_d2 %>% 
+  mutate(group = 'lose medium')
+
+other_amp_d1d2 <- amp_other_clusters_d1_d2 %>% 
+  mutate(group = 'other')
+
+
+# list all clusters with their amplitude profile description
+clusters_d1d2 <- bind_rows(gain_amp_high_d1d2,
+                           gain_amp_med_d1d2,
+                           lose_amp_high_d1d2,
+                           lose_amp_med_d1d2,
+                           other_amp_d1d2) %>% 
+  mutate_at(1, as.numeric) %>%
+  arrange(cluster)
+
+get_CCGs_clusters <- function(df1, col_str1, col_str2, df2, clock_id){
+  
+  tidy_clock_summary <- df1 %>% 
+    group_by({{col_str1}}, {{col_str2}}) %>% 
+    dplyr::summarise(n=n()) %>%
+    mutate_at(1, as.numeric) %>%
+    arrange(cluster) %>%
+    ungroup() %>% 
+    mutate(group = case_when(type == 'gain_high_d1_d2' ~ 'gain high',
+                             type == 'gain_medium_d1_d2' ~ 'gain medium',
+                             type == 'lose_high_d1_d2' ~ 'lose high',
+                             type == 'lose_medium_d1_d2' ~ 'lose medium',
+                             TRUE ~ 'other')) %>%
+    select(-type)
+  
+  complete_clusters <- df2 %>%
+    left_join(tidy_clock_summary) %>% 
+    mutate_at(3, ~replace_na(.,0)) %>% 
+    dplyr::rename({{clock_id}} := n)
+  
+  return(complete_clusters)
+  
+}
+
+# d1-d2----
+LHY_CCG_cl_d1d2 <- get_CCGs_clusters(LHY_bind_d1d2, cluster, type, clusters_d1d2, LHY)
+CCA1_CCG_cl_d1d2 <- get_CCGs_clusters(CCA1_nagel_kamioka_bind_d1d2, cluster, type, clusters_d1d2, CCA1)
+TOC1_CCG_cl_d1d2 <- get_CCGs_clusters(TOC1_bind_d1d2, cluster, type, clusters_d1d2, TOC1)
+PRR5_CCG_cl_d1d2 <- get_CCGs_clusters(PRR5_bind_d1d2, cluster, type, clusters_d1d2, PRR5)
+PRR7_CCG_cl_d1d2 <- get_CCGs_clusters(PRR7_bind_d1d2, cluster, type, clusters_d1d2, PRR7)
+LUX_CCG_cl_d1d2 <- get_CCGs_clusters(LUX_bind_d1d2, cluster, type, clusters_d1d2, LUX)
+ELF3_CCG_cl_d1d2 <- get_CCGs_clusters(ELF3_bind_d1d2, cluster, type, clusters_d1d2, ELF3)
+ELF4_CCG_cl_d1d2 <- get_CCGs_clusters(ELF4_bind_d1d2, cluster, type, clusters_d1d2, ELF4)
+
+clock_clusters_d1d2 <- purrr::reduce(list(LHY_CCG_cl_d1d2, CCA1_CCG_cl_d1d2, TOC1_CCG_cl_d1d2,
+                                          PRR5_CCG_cl_d1d2, PRR7_CCG_cl_d1d2, LUX_CCG_cl_d1d2,
+                                          ELF3_CCG_cl_d1d2, ELF4_CCG_cl_d1d2), dplyr::left_join)
+
+# d1-d5----
+LHY_CCG_cl_d1d5 <- get_CCGs_clusters(LHY_bind_d1d5, cluster, type, clusters_d1d2, LHY)
+CCA1_CCG_cl_d1d5 <- get_CCGs_clusters(CCA1_nagel_kamioka_bind_d1d5, cluster, type, clusters_d1d2, CCA1)
+TOC1_CCG_cl_d1d5 <- get_CCGs_clusters(TOC1_bind_d1d5, cluster, type, clusters_d1d2, TOC1)
+PRR5_CCG_cl_d1d5 <- get_CCGs_clusters(PRR5_bind_d1d5, cluster, type, clusters_d1d2, PRR5)
+PRR7_CCG_cl_d1d5 <- get_CCGs_clusters(PRR7_bind_d1d5, cluster, type, clusters_d1d2, PRR7)
+LUX_CCG_cl_d1d5 <- get_CCGs_clusters(LUX_bind_d1d5, cluster, type, clusters_d1d2, LUX)
+ELF3_CCG_cl_d1d5 <- get_CCGs_clusters(ELF3_bind_d1d5, cluster, type, clusters_d1d2, ELF3)
+ELF4_CCG_cl_d1d5 <- get_CCGs_clusters(ELF4_bind_d1d5, cluster, type, clusters_d1d2, ELF4)
+
+clock_clusters_d1d5 <- purrr::reduce(list(LHY_CCG_cl_d1d5, CCA1_CCG_cl_d1d5, TOC1_CCG_cl_d1d5,
+                                          PRR5_CCG_cl_d1d5, PRR7_CCG_cl_d1d5, LUX_CCG_cl_d1d5,
+                                          ELF3_CCG_cl_d1d5, ELF4_CCG_cl_d1d5), dplyr::left_join)
+
+
+
+
+
+
