@@ -256,6 +256,20 @@ TF_ezer_ELF4_merge <-inner_join (TF, ezer_ELF4, by = "gene_ID") %>%
 
 : Arabidopsis Clock ChIP data-sets and their overlap with the cold TF network [@calixto2018a] {#tbl-Clock ChIP data-sets}
 
+some text here
+
+::: panel-tabset
+#### Day 1 vs Day 2 
+
+![](./03_plots/plot_clock_d1d2)
+
+#### Day 1 vs Day 5 
+
+![](./03_plots/plot_clock_d1d5)
+
+Proportions of clock targets aligned with amplitude patters
+:::
+
 ## Quarto
 
 Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
