@@ -634,7 +634,7 @@ ELF4_d1d2_summary <- summarise_targets(ELF4_bind_d1d2, type, 'ELF4')
 
 clock_d1_d2 <- bind_rows(LHY_d1d2_summary, CCA1_nagel_kamioka_d1d2_summary, TOC1_d1d2_summary,
                          PRR5_d1d2_summary, PRR7_d1d2_summary, LUX_d1d2_summary, ELF3_d1d2_summary,
-                         ELF4_d1d2_summary)
+                         ELF4_d1d2_summary) 
 
 # d1-d5----
 LHY_d1d5_summary <- summarise_targets(LHY_bind_d1d5, type, 'LHY')
@@ -750,7 +750,92 @@ ELF4_CCG_cl_d1d2 <- get_CCGs_clusters(ELF4_bind_d1d2, cluster, type, clusters_d1
 
 clock_clusters_d1d2 <- purrr::reduce(list(LHY_CCG_cl_d1d2, CCA1_CCG_cl_d1d2, TOC1_CCG_cl_d1d2,
                                           PRR5_CCG_cl_d1d2, PRR7_CCG_cl_d1d2, LUX_CCG_cl_d1d2,
-                                          ELF3_CCG_cl_d1d2, ELF4_CCG_cl_d1d2), dplyr::left_join)
+                                          ELF3_CCG_cl_d1d2, ELF4_CCG_cl_d1d2), dplyr::left_join) %>% 
+  rowwise(cluster) %>%
+  dplyr::mutate(sum = sum(c_across(LHY:ELF4))) %>% 
+  relocate(sum, .before = LHY) %>% 
+  mutate(group = factor(group, levels = c('gain high', 'gain medium', 'lose high', 'lose medium', 'other')))
+
+circbar_d1d2 <- clock_clusters_d1d2 %>% 
+  pivot_longer(cols = LHY:ELF4, values_to = 'number') 
+
+# Set a number of 'empty bar' to add at the end of each group
+circbar_d1d2_empty_bar <- 2
+
+circbar_d1d2_nOBsType <- nlevels(as.factor(circbar_d1d2$name))
+
+circbar_d1d2_to_add <- data.frame( matrix(NA, circbar_d1d2_empty_bar*nlevels(circbar_d1d2$group)*circbar_d1d2_nOBsType, ncol(circbar_d1d2)) )
+
+colnames(circbar_d1d2_to_add) <- colnames(circbar_d1d2)
+
+circbar_d1d2_to_add$group <- rep(levels(circbar_d1d2$group), each=circbar_d1d2_empty_bar*circbar_d1d2_nOBsType )
+
+circbar_d1d2 <- rbind(circbar_d1d2, circbar_d1d2_to_add)
+
+circbar_d1d2_gc <- circbar_d1d2 %>% arrange(group, cluster)
+
+circbar_d1d2_gs <- circbar_d1d2_gc %>% arrange(group, sum)
+
+circbar_d1d2_gs$id <- rep( seq(1, nrow(circbar_d1d2_gs)/circbar_d1d2_nOBsType) , each=circbar_d1d2_nOBsType)
+
+circbar_d1d2_gs$name <- factor(circbar_d1d2_gs$name, levels = c("CCA1", "LHY", "TOC1", "PRR5", "PRR7", "LUX", "ELF3", "ELF4"))
+
+# Get the name and the y position of each label
+label_data_circbar_d1d2<- circbar_d1d2_gs %>% dplyr::group_by(id, cluster) %>% dplyr::summarize(tot=sum(number))
+
+number_of_bar_circbar_d1d2 <- nrow(label_data_circbar_d1d2)
+
+angle_circbar_d1d2 <- 90 - 360 * (label_data_circbar_d1d2$id-0.5) /number_of_bar_circbar_d1d2
+
+label_data_circbar_d1d2$hjust <- ifelse(angle_circbar_d1d2 < -90, 1, 0)
+
+label_data_circbar_d1d2$angle <- ifelse(angle_circbar_d1d2 < -90, angle_circbar_d1d2+180, angle_circbar_d1d2)
+
+# prepare a data frame for base lines
+base_data_circbar_d1d2 <- circbar_d1d2_gs %>% dplyr::group_by(group) %>% dplyr::summarize(start=min(id), end=max(id) - circbar_d1d2_empty_bar) %>% dplyr::rowwise() %>% dplyr::mutate(title=mean(c(start, end)))
+
+# prepare a data frame for grid (scales)
+grid_data_circbar_d1d2 <- base_data_circbar_d1d2
+
+grid_data_circbar_d1d2$end <- grid_data_circbar_d1d2$end[ c( nrow(grid_data_circbar_d1d2), 1:nrow(grid_data_circbar_d1d2)-1)] + 1
+
+grid_data_circbar_d1d2$start <- grid_data_circbar_d1d2$start - 1
+
+grid_data_circbar_d1d2 <- grid_data_circbar_d1d2[-1,]
+circbar_d1d2_plot
+
+# Make the plot
+circbar_d1d2_plot <- ggplot(circbar_d1d2_gs) +
+  
+  # Add the stacked bar
+  geom_bar(aes(x=as.factor(id), y=number, fill=name), stat="identity", alpha=0.75) +
+  scale_fill_manual (values=c("#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00", "#ffff33", "#a65628", "#f781bf")) +
+  
+  # Add a val=150/100/50/0 lines
+  geom_segment(data= grid_data_circbar_d1d2, aes(x = end, y = 0, xend = start, yend = 0), colour = "grey30", alpha=0.5, size=0.3 , inherit.aes = FALSE ) +
+  geom_segment(data= grid_data_circbar_d1d2, aes(x = end, y = 50, xend = start, yend = 50), colour = "grey30", alpha=0.5, size=0.3 , inherit.aes = FALSE ) +
+  geom_segment(data= grid_data_circbar_d1d2, aes(x = end, y = 100, xend = start, yend = 100), colour = "grey30", alpha=0.5, size=0.3 , inherit.aes = FALSE ) +
+  geom_segment(data= grid_data_circbar_d1d2, aes(x = end, y = 150, xend = start, yend = 150), colour = "grey30", alpha=0.5, size=0.3 , inherit.aes = FALSE ) +
+  
+  # Add text showing the value of each 150/100/50/0 line
+  ggplot2::annotate("text", x = rep(max(circbar_d1d2_gs$id),4), y = c(0, 50, 100, 150), label = c("0", "50", "100", "150") , color="grey30", size=5 , angle=0, fontface="bold", hjust=1) +
+  ylim(-150,max(20+label_data_circbar_d1d2$tot, na.rm=T)) +
+  theme_minimal() +
+  theme(legend.position=c(0.25,0.8),
+        legend.text = element_text(color = "black", size = 9),
+        legend.title= element_blank(),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        panel.grid = element_blank(),
+        plot.margin = unit(rep(-1,4), "cm")) +
+  coord_polar() +
+  
+  # Add labels on top of each bar
+  geom_text(data=label_data_circbar_d1d2, aes(x=id, y=tot+5, label=cluster, hjust=hjust), color="black", fontface="bold",alpha=0.6, size=4, angle= label_data_circbar_d1d2$angle, inherit.aes = FALSE ) +
+  
+  # Add base line information
+  geom_segment(data=base_data_circbar_d1d2, aes(x = start, y = -5, xend = end, yend = -5), colour = "black", alpha=0.8, size=0.6 , inherit.aes = FALSE )  +
+  geom_text(data=base_data_circbar_d1d2, aes(x = title, y = -15, label=group), hjust=c(1,1,0.5,0,0), vjust=c(0,0,-1,0,1), colour = "black", alpha=0.8, size=4, fontface="bold", inherit.aes = FALSE)
 
 # d1-d5----
 LHY_CCG_cl_d1d5 <- get_CCGs_clusters(LHY_bind_d1d5, cluster, type, clusters_d1d2, LHY)
@@ -764,10 +849,91 @@ ELF4_CCG_cl_d1d5 <- get_CCGs_clusters(ELF4_bind_d1d5, cluster, type, clusters_d1
 
 clock_clusters_d1d5 <- purrr::reduce(list(LHY_CCG_cl_d1d5, CCA1_CCG_cl_d1d5, TOC1_CCG_cl_d1d5,
                                           PRR5_CCG_cl_d1d5, PRR7_CCG_cl_d1d5, LUX_CCG_cl_d1d5,
-                                          ELF3_CCG_cl_d1d5, ELF4_CCG_cl_d1d5), dplyr::left_join)
+                                          ELF3_CCG_cl_d1d5, ELF4_CCG_cl_d1d5), dplyr::left_join) %>% 
+  rowwise(cluster) %>%
+  dplyr::mutate(sum = sum(c_across(LHY:ELF4))) %>% 
+  relocate(sum, .before = LHY) %>% 
+  mutate(group = factor(group, levels = c('gain high', 'gain medium', 'lose high', 'lose medium', 'other')))
 
+circbar_d1d5 <- clock_clusters_d1d5 %>% 
+  pivot_longer(cols = LHY:ELF4, values_to = 'number') 
 
+# Set a number of 'empty bar' to add at the end of each group
+circbar_d1d5_empty_bar <- 2
 
+circbar_d1d5_nOBsType <- nlevels(as.factor(circbar_d1d5$name))
 
+circbar_d1d5_to_add <- data.frame( matrix(NA, circbar_d1d5_empty_bar*nlevels(circbar_d1d5$group)*circbar_d1d5_nOBsType, ncol(circbar_d1d5)) )
 
+colnames(circbar_d1d5_to_add) <- colnames(circbar_d1d5)
+
+circbar_d1d5_to_add$group <- rep(levels(circbar_d1d5$group), each=circbar_d1d5_empty_bar*circbar_d1d5_nOBsType )
+
+circbar_d1d5 <- rbind(circbar_d1d5, circbar_d1d5_to_add)
+
+circbar_d1d5_gc <- circbar_d1d5 %>% arrange(group, cluster)
+
+circbar_d1d5_gs <- circbar_d1d5_gc %>% arrange(group, sum)
+
+circbar_d1d5_gs$id <- rep( seq(1, nrow(circbar_d1d5_gs)/circbar_d1d5_nOBsType) , each=circbar_d1d5_nOBsType)
+
+circbar_d1d5_gs$name <- factor(circbar_d1d5_gs$name, levels = c("CCA1", "LHY", "TOC1", "PRR5", "PRR7", "LUX", "ELF3", "ELF4"))
+
+# Get the name and the y position of each label
+label_data_circbar_d1d5<- circbar_d1d5_gs %>% dplyr::group_by(id, cluster) %>% dplyr::summarize(tot=sum(number))
+
+number_of_bar_circbar_d1d5 <- nrow(label_data_circbar_d1d5)
+
+angle_circbar_d1d5 <- 90 - 360 * (label_data_circbar_d1d5$id-0.5) /number_of_bar_circbar_d1d5
+
+label_data_circbar_d1d5$hjust <- ifelse(angle_circbar_d1d5 < -90, 1, 0)
+
+label_data_circbar_d1d5$angle <- ifelse(angle_circbar_d1d5 < -90, angle_circbar_d1d5+180, angle_circbar_d1d5)
+
+# prepare a data frame for base lines
+base_data_circbar_d1d5 <- circbar_d1d5_gs %>% dplyr::group_by(group) %>% dplyr::summarize(start=min(id), end=max(id) - circbar_d1d5_empty_bar) %>% dplyr::rowwise() %>% dplyr::mutate(title=mean(c(start, end)))
+
+# prepare a data frame for grid (scales)
+grid_data_circbar_d1d5 <- base_data_circbar_d1d5
+
+grid_data_circbar_d1d5$end <- grid_data_circbar_d1d5$end[ c( nrow(grid_data_circbar_d1d5), 1:nrow(grid_data_circbar_d1d5)-1)] + 1
+
+grid_data_circbar_d1d5$start <- grid_data_circbar_d1d5$start - 1
+
+grid_data_circbar_d1d5 <- grid_data_circbar_d1d5[-1,]
+
+circbar_d1d5_plot
+
+# Make the plot
+circbar_d1d5_plot <- ggplot(circbar_d1d5_gs) +
+  
+  # Add the stacked bar
+  geom_bar(aes(x=as.factor(id), y=number, fill=name), stat="identity", alpha=0.75) +
+  scale_fill_manual (values=c("#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00", "#ffff33", "#a65628", "#f781bf")) +
+  
+  # Add a val=150/100/50/0 lines
+  geom_segment(data= grid_data_circbar_d1d5, aes(x = end, y = 0, xend = start, yend = 0), colour = "grey30", alpha=0.5, size=0.3 , inherit.aes = FALSE ) +
+  geom_segment(data= grid_data_circbar_d1d5, aes(x = end, y = 50, xend = start, yend = 50), colour = "grey30", alpha=0.5, size=0.3 , inherit.aes = FALSE ) +
+  geom_segment(data= grid_data_circbar_d1d5, aes(x = end, y = 100, xend = start, yend = 100), colour = "grey30", alpha=0.5, size=0.3 , inherit.aes = FALSE ) +
+  geom_segment(data= grid_data_circbar_d1d5, aes(x = end, y = 150, xend = start, yend = 150), colour = "grey30", alpha=0.5, size=0.3 , inherit.aes = FALSE ) +
+  
+  # Add text showing the value of each 150/100/50/0 line
+  ggplot2::annotate("text", x = rep(max(circbar_d1d5_gs$id),4), y = c(0, 50, 100, 150), label = c("0", "50", "100", "150") , color="grey30", size=5 , angle=0, fontface="bold", hjust=1) +
+  ylim(-150,max(20+label_data_circbar_d1d5$tot, na.rm=T)) +
+  theme_minimal() +
+  theme(legend.position=c(0.25,0.8),
+        legend.text = element_text(color = "black", size = 9),
+        legend.title= element_blank(),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        panel.grid = element_blank(),
+        plot.margin = unit(rep(-1,4), "cm")) +
+  coord_polar() +
+  
+  # Add labels on top of each bar
+  geom_text(data=label_data_circbar_d1d5, aes(x=id, y=tot+5, label=cluster, hjust=hjust), color="black", fontface="bold",alpha=0.6, size=4, angle= label_data_circbar_d1d5$angle, inherit.aes = FALSE ) +
+  
+  # Add base line information
+  geom_segment(data=base_data_circbar_d1d5, aes(x = start, y = -5, xend = end, yend = -5), colour = "black", alpha=0.8, size=0.6 , inherit.aes = FALSE )  +
+  geom_text(data=base_data_circbar_d1d5, aes(x = title, y = -15, label=group), hjust=c(1,1,0.5,0,0), vjust=c(0,0,-1,0,1), colour = "black", alpha=0.8, size=4, fontface="bold", inherit.aes = FALSE)
 
