@@ -267,7 +267,21 @@ some text here
 
 ![](./03_plots/plot_clock_d1d5)
 
-Proportions of clock targets aligned with amplitude patters
+Proportions of clock targets aligned with amplitude patterns
+:::
+
+some text here
+
+::: panel-tabset
+#### Day 1 vs Day 2 
+
+![](./03_plots/circbar_d1d2_plot)
+
+#### Day 1 vs Day 5 
+
+![](./03_plots/circbar_d1d5_plot)
+
+Proportions of clock targets aligned with amplitude patterns
 :::
 
 ## Quarto
