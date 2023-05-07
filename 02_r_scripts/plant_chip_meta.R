@@ -714,7 +714,7 @@ clusters_d1d2 <- bind_rows(gain_amp_high_d1d2,
   mutate_at(1, as.numeric) %>%
   arrange(cluster)
 
-get_CCGs_clusters <- function(df1, col_str1, col_str2, df2, clock_id){
+get_CCGs_clusters <- function(df1, col_str1, col_str2, df2, clock_id, type1, type2, type3, type4){
   
   tidy_clock_summary <- df1 %>% 
     group_by({{col_str1}}, {{col_str2}}) %>% 
@@ -722,10 +722,10 @@ get_CCGs_clusters <- function(df1, col_str1, col_str2, df2, clock_id){
     mutate_at(1, as.numeric) %>%
     arrange(cluster) %>%
     ungroup() %>% 
-    mutate(group = case_when(type == 'gain_high_d1_d2' ~ 'gain high',
-                             type == 'gain_medium_d1_d2' ~ 'gain medium',
-                             type == 'lose_high_d1_d2' ~ 'lose high',
-                             type == 'lose_medium_d1_d2' ~ 'lose medium',
+    mutate(group = case_when(type == {{type1}} ~ 'gain high',
+                             type == {{type2}} ~ 'gain medium',
+                             type == {{type3}} ~ 'lose high',
+                             type == {{type4}} ~ 'lose medium',
                              TRUE ~ 'other')) %>%
     select(-type)
   
@@ -739,14 +739,14 @@ get_CCGs_clusters <- function(df1, col_str1, col_str2, df2, clock_id){
 }
 
 # d1-d2----
-LHY_CCG_cl_d1d2 <- get_CCGs_clusters(LHY_bind_d1d2, cluster, type, clusters_d1d2, LHY)
-CCA1_CCG_cl_d1d2 <- get_CCGs_clusters(CCA1_nagel_kamioka_bind_d1d2, cluster, type, clusters_d1d2, CCA1)
-TOC1_CCG_cl_d1d2 <- get_CCGs_clusters(TOC1_bind_d1d2, cluster, type, clusters_d1d2, TOC1)
-PRR5_CCG_cl_d1d2 <- get_CCGs_clusters(PRR5_bind_d1d2, cluster, type, clusters_d1d2, PRR5)
-PRR7_CCG_cl_d1d2 <- get_CCGs_clusters(PRR7_bind_d1d2, cluster, type, clusters_d1d2, PRR7)
-LUX_CCG_cl_d1d2 <- get_CCGs_clusters(LUX_bind_d1d2, cluster, type, clusters_d1d2, LUX)
-ELF3_CCG_cl_d1d2 <- get_CCGs_clusters(ELF3_bind_d1d2, cluster, type, clusters_d1d2, ELF3)
-ELF4_CCG_cl_d1d2 <- get_CCGs_clusters(ELF4_bind_d1d2, cluster, type, clusters_d1d2, ELF4)
+LHY_CCG_cl_d1d2 <- get_CCGs_clusters(LHY_bind_d1d2, cluster, type, clusters_d1d2, LHY, 'gain_high_d1_d2', 'gain_medium_d1_d2', 'lose_high_d1_d2', 'lose_medium_d1_d2')
+CCA1_CCG_cl_d1d2 <- get_CCGs_clusters(CCA1_nagel_kamioka_bind_d1d2, cluster, type, clusters_d1d2, CCA1, 'gain_high_d1_d2', 'gain_medium_d1_d2', 'lose_high_d1_d2', 'lose_medium_d1_d2')
+TOC1_CCG_cl_d1d2 <- get_CCGs_clusters(TOC1_bind_d1d2, cluster, type, clusters_d1d2, TOC1, 'gain_high_d1_d2', 'gain_medium_d1_d2', 'lose_high_d1_d2', 'lose_medium_d1_d2')
+PRR5_CCG_cl_d1d2 <- get_CCGs_clusters(PRR5_bind_d1d2, cluster, type, clusters_d1d2, PRR5, 'gain_high_d1_d2', 'gain_medium_d1_d2', 'lose_high_d1_d2', 'lose_medium_d1_d2')
+PRR7_CCG_cl_d1d2 <- get_CCGs_clusters(PRR7_bind_d1d2, cluster, type, clusters_d1d2, PRR7, 'gain_high_d1_d2', 'gain_medium_d1_d2', 'lose_high_d1_d2', 'lose_medium_d1_d2')
+LUX_CCG_cl_d1d2 <- get_CCGs_clusters(LUX_bind_d1d2, cluster, type, clusters_d1d2, LUX, 'gain_high_d1_d2', 'gain_medium_d1_d2', 'lose_high_d1_d2', 'lose_medium_d1_d2')
+ELF3_CCG_cl_d1d2 <- get_CCGs_clusters(ELF3_bind_d1d2, cluster, type, clusters_d1d2, ELF3, 'gain_high_d1_d2', 'gain_medium_d1_d2', 'lose_high_d1_d2', 'lose_medium_d1_d2')
+ELF4_CCG_cl_d1d2 <- get_CCGs_clusters(ELF4_bind_d1d2, cluster, type, clusters_d1d2, ELF4, 'gain_high_d1_d2', 'gain_medium_d1_d2', 'lose_high_d1_d2', 'lose_medium_d1_d2')
 
 clock_clusters_d1d2 <- purrr::reduce(list(LHY_CCG_cl_d1d2, CCA1_CCG_cl_d1d2, TOC1_CCG_cl_d1d2,
                                           PRR5_CCG_cl_d1d2, PRR7_CCG_cl_d1d2, LUX_CCG_cl_d1d2,
@@ -757,7 +757,11 @@ clock_clusters_d1d2 <- purrr::reduce(list(LHY_CCG_cl_d1d2, CCA1_CCG_cl_d1d2, TOC
   mutate(group = factor(group, levels = c('gain high', 'gain medium', 'lose high', 'lose medium', 'other')))
 
 circbar_d1d2 <- clock_clusters_d1d2 %>% 
-  pivot_longer(cols = LHY:ELF4, values_to = 'number') 
+  pivot_longer(cols = LHY:ELF4, values_to = 'number')
+
+#https://www.r-graph-gallery.com/295-basic-circular-barplot.html
+#https://www.r-graph-gallery.com/296-add-labels-to-circular-barplot
+#https://www.r-graph-gallery.com/299-circular-stacked-barplot.html
 
 # Set a number of 'empty bar' to add at the end of each group
 circbar_d1d2_empty_bar <- 2
@@ -809,7 +813,7 @@ circbar_d1d2_plot <- ggplot(circbar_d1d2_gs) +
   
   # Add the stacked bar
   geom_bar(aes(x=as.factor(id), y=number, fill=name), stat="identity", alpha=0.75) +
-  scale_fill_manual (values=c("#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00", "#ffff33", "#a65628", "#f781bf")) +
+  scale_fill_manual (values=c("#1a9850", "#a6d96a", "#4575b4", "#fdae61", "#f46d43", "#542788", "#636363", "#cccccc")) +
   
   # Add a val=150/100/50/0 lines
   geom_segment(data= grid_data_circbar_d1d2, aes(x = end, y = 0, xend = start, yend = 0), colour = "grey30", alpha=0.5, size=0.3 , inherit.aes = FALSE ) +
@@ -837,15 +841,41 @@ circbar_d1d2_plot <- ggplot(circbar_d1d2_gs) +
   geom_segment(data=base_data_circbar_d1d2, aes(x = start, y = -5, xend = end, yend = -5), colour = "black", alpha=0.8, size=0.6 , inherit.aes = FALSE )  +
   geom_text(data=base_data_circbar_d1d2, aes(x = title, y = -15, label=group), hjust=c(1,1,0.5,0,0), vjust=c(0,0,-1,0,1), colour = "black", alpha=0.8, size=4, fontface="bold", inherit.aes = FALSE)
 
+ggsave(circbar_d1d2_plot, file="./03_plots/circbar_d1d2_plot.png", width=8, height=8, units="in",dpi=200)
+
 # d1-d5----
-LHY_CCG_cl_d1d5 <- get_CCGs_clusters(LHY_bind_d1d5, cluster, type, clusters_d1d2, LHY)
-CCA1_CCG_cl_d1d5 <- get_CCGs_clusters(CCA1_nagel_kamioka_bind_d1d5, cluster, type, clusters_d1d2, CCA1)
-TOC1_CCG_cl_d1d5 <- get_CCGs_clusters(TOC1_bind_d1d5, cluster, type, clusters_d1d2, TOC1)
-PRR5_CCG_cl_d1d5 <- get_CCGs_clusters(PRR5_bind_d1d5, cluster, type, clusters_d1d2, PRR5)
-PRR7_CCG_cl_d1d5 <- get_CCGs_clusters(PRR7_bind_d1d5, cluster, type, clusters_d1d2, PRR7)
-LUX_CCG_cl_d1d5 <- get_CCGs_clusters(LUX_bind_d1d5, cluster, type, clusters_d1d2, LUX)
-ELF3_CCG_cl_d1d5 <- get_CCGs_clusters(ELF3_bind_d1d5, cluster, type, clusters_d1d2, ELF3)
-ELF4_CCG_cl_d1d5 <- get_CCGs_clusters(ELF4_bind_d1d5, cluster, type, clusters_d1d2, ELF4)
+
+gain_amp_high_d1d5 <- amp_gain_high_clusters_d1_d5 %>% 
+  mutate(group = 'gain high')
+
+gain_amp_med_d1d5 <- amp_gain_medium_clusters_d1_d5 %>% 
+  mutate(group = 'gain medium')
+
+lose_amp_high_d1d5 <- amp_lose_high_clusters_d1_d5 %>% 
+  mutate(group = 'lose high')
+
+lose_amp_med_d1d5 <- amp_lose_medium_clusters_d1_d5 %>% 
+  mutate(group = 'lose medium')
+
+other_amp_d1d5 <- amp_other_clusters_d1_d5 %>% 
+  mutate(group = 'other')
+
+clusters_d1d5 <- bind_rows(gain_amp_high_d1d5,
+                           gain_amp_med_d1d5,
+                           lose_amp_high_d1d5,
+                           lose_amp_med_d1d5,
+                           other_amp_d1d5) %>% 
+  mutate_at(1, as.numeric) %>%
+  arrange(cluster)
+
+LHY_CCG_cl_d1d5 <- get_CCGs_clusters(LHY_bind_d1d5, cluster, type, clusters_d1d5, LHY, 'gain_high_d1_d5', 'gain_medium_d1_d5', 'lose_high_d1_d5', 'lose_medium_d1_d5')
+CCA1_CCG_cl_d1d5 <- get_CCGs_clusters(CCA1_nagel_kamioka_bind_d1d5, cluster, type, clusters_d1d5, CCA1, 'gain_high_d1_d5', 'gain_medium_d1_d5', 'lose_high_d1_d5', 'lose_medium_d1_d5')
+TOC1_CCG_cl_d1d5 <- get_CCGs_clusters(TOC1_bind_d1d5, cluster, type, clusters_d1d5, TOC1, 'gain_high_d1_d5', 'gain_medium_d1_d5', 'lose_high_d1_d5', 'lose_medium_d1_d5')
+PRR5_CCG_cl_d1d5 <- get_CCGs_clusters(PRR5_bind_d1d5, cluster, type, clusters_d1d5, PRR5, 'gain_high_d1_d5', 'gain_medium_d1_d5', 'lose_high_d1_d5', 'lose_medium_d1_d5')
+PRR7_CCG_cl_d1d5 <- get_CCGs_clusters(PRR7_bind_d1d5, cluster, type, clusters_d1d5, PRR7, 'gain_high_d1_d5', 'gain_medium_d1_d5', 'lose_high_d1_d5', 'lose_medium_d1_d5')
+LUX_CCG_cl_d1d5 <- get_CCGs_clusters(LUX_bind_d1d5, cluster, type, clusters_d1d5, LUX, 'gain_high_d1_d5', 'gain_medium_d1_d5', 'lose_high_d1_d5', 'lose_medium_d1_d5')
+ELF3_CCG_cl_d1d5 <- get_CCGs_clusters(ELF3_bind_d1d5, cluster, type, clusters_d1d5, ELF3, 'gain_high_d1_d5', 'gain_medium_d1_d5', 'lose_high_d1_d5', 'lose_medium_d1_d5')
+ELF4_CCG_cl_d1d5 <- get_CCGs_clusters(ELF4_bind_d1d5, cluster, type, clusters_d1d5, ELF4, 'gain_high_d1_d5', 'gain_medium_d1_d5', 'lose_high_d1_d5', 'lose_medium_d1_d5')
 
 clock_clusters_d1d5 <- purrr::reduce(list(LHY_CCG_cl_d1d5, CCA1_CCG_cl_d1d5, TOC1_CCG_cl_d1d5,
                                           PRR5_CCG_cl_d1d5, PRR7_CCG_cl_d1d5, LUX_CCG_cl_d1d5,
@@ -909,7 +939,7 @@ circbar_d1d5_plot <- ggplot(circbar_d1d5_gs) +
   
   # Add the stacked bar
   geom_bar(aes(x=as.factor(id), y=number, fill=name), stat="identity", alpha=0.75) +
-  scale_fill_manual (values=c("#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00", "#ffff33", "#a65628", "#f781bf")) +
+  scale_fill_manual (values=c("#1a9850", "#a6d96a", "#4575b4", "#fdae61", "#f46d43", "#542788", "#636363", "#cccccc")) +
   
   # Add a val=150/100/50/0 lines
   geom_segment(data= grid_data_circbar_d1d5, aes(x = end, y = 0, xend = start, yend = 0), colour = "grey30", alpha=0.5, size=0.3 , inherit.aes = FALSE ) +
@@ -935,5 +965,7 @@ circbar_d1d5_plot <- ggplot(circbar_d1d5_gs) +
   
   # Add base line information
   geom_segment(data=base_data_circbar_d1d5, aes(x = start, y = -5, xend = end, yend = -5), colour = "black", alpha=0.8, size=0.6 , inherit.aes = FALSE )  +
-  geom_text(data=base_data_circbar_d1d5, aes(x = title, y = -15, label=group), hjust=c(1,1,0.5,0,0), vjust=c(0,0,-1,0,1), colour = "black", alpha=0.8, size=4, fontface="bold", inherit.aes = FALSE)
+  geom_text(data=base_data_circbar_d1d5, aes(x = title, y = -15, label=group), hjust=c(0.5,1,1,0,0), vjust=c(0.5,0,-1,0,1), colour = "black", alpha=0.8, size=4, fontface="bold", inherit.aes = FALSE)
+
+ggsave(circbar_d1d5_plot, file="./03_plots/circbar_d1d5_plot.png", width=8, height=8, units="in",dpi=200)
 
