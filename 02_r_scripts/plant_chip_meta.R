@@ -969,3 +969,192 @@ circbar_d1d5_plot <- ggplot(circbar_d1d5_gs) +
 
 ggsave(circbar_d1d5_plot, file="./03_plots/circbar_d1d5_plot.png", width=8, height=8, units="in",dpi=200)
 
+# Odds Ratios----
+
+# 7302 gene loci grouped in 75 clusters (0-74); error in row 5772
+TF_network_clusters <- read_csv('./00_raw_data/TF Network Cluster Nov2018 long format.csv') %>%
+  filter(!row_number() %in% 5772)
+
+# count of gene loci in each TF cluster
+TF_network_clusters_count <-  TF_network_clusters %>% 
+  dplyr::group_by(cluster) %>%
+  dplyr::summarise(cluster_number = n()) %>% 
+  filter(!cluster == 0)
+
+LHY_CCG_cl_d1d2_fishers <- LHY_CCG_cl_d1d2 %>% 
+  dplyr::select(-group) %>% 
+  inner_join(TF_network_clusters_count) %>% 
+  mutate(fishers_col2 = sum(LHY) - LHY,
+         fishers_col4 = sum(cluster_number) - cluster_number) %>% 
+  dplyr::select(LHY, cluster_number, fishers_col2, fishers_col4) %>% 
+  dplyr::rename(fishers_col1 = LHY,
+                fishers_col3 = cluster_number) %>% 
+  relocate(fishers_col2, .after = fishers_col1)
+
+fishers_prep<- function(df1, col_str1, col_str2, clock_id, col_str3, col_str4){
+  
+  prep1 <- df1 %>% 
+    dplyr::select(-group) %>% 
+    inner_join(TF_network_clusters_count) %>%
+    dplyr::mutate({{col_str1}} := sum({{clock_id}}) - {{clock_id}},
+           {{col_str2}} := sum(cluster_number) - cluster_number)
+  
+  prep2 <- prep1 %>% 
+    dplyr::select({{clock_id}}, cluster_number, {{col_str1}}, {{col_str2}}) %>% 
+    dplyr::rename({{col_str3}} := {{clock_id}},
+                  {{col_str4}} := cluster_number) %>% 
+    relocate({{col_str1}}, .after = {{col_str3}})
+  
+  return(prep2)
+  
+  
+}
+
+#d1-d2----
+
+LHY_d1d2_fishers_prep <- fishers_prep(LHY_CCG_cl_d1d2, fishers_col2, fishers_col4, LHY, fishers_col1, fishers_col3)
+CCA1_d1d2_fishers_prep <- fishers_prep(CCA1_CCG_cl_d1d2, fishers_col2, fishers_col4, CCA1, fishers_col1, fishers_col3)
+TOC1_d1d2_fishers_prep <- fishers_prep(TOC1_CCG_cl_d1d2, fishers_col2, fishers_col4, TOC1, fishers_col1, fishers_col3)
+PRR5_d1d2_fishers_prep <- fishers_prep(PRR5_CCG_cl_d1d2, fishers_col2, fishers_col4, PRR5, fishers_col1, fishers_col3)
+PRR7_d1d2_fishers_prep <- fishers_prep(PRR7_CCG_cl_d1d2, fishers_col2, fishers_col4, PRR7, fishers_col1, fishers_col3)
+LUX_d1d2_fishers_prep <- fishers_prep(LUX_CCG_cl_d1d2, fishers_col2, fishers_col4, LUX, fishers_col1, fishers_col3)
+ELF3_d1d2_fishers_prep <- fishers_prep(ELF3_CCG_cl_d1d2, fishers_col2, fishers_col4, ELF3, fishers_col1, fishers_col3)
+ELF4_d1d2_fishers_prep <- fishers_prep(ELF4_CCG_cl_d1d2, fishers_col2, fishers_col4, ELF4, fishers_col1, fishers_col3)
+
+
+#d1-d5----
+
+LHY_d1d5_fishers_prep <- fishers_prep(LHY_CCG_cl_d1d5, fishers_col2, fishers_col4, LHY, fishers_col1, fishers_col3)
+CCA1_d1d5_fishers_prep <- fishers_prep(CCA1_CCG_cl_d1d5, fishers_col2, fishers_col4, CCA1, fishers_col1, fishers_col3)
+TOC1_d1d5_fishers_prep <- fishers_prep(TOC1_CCG_cl_d1d5, fishers_col2, fishers_col4, TOC1, fishers_col1, fishers_col3)
+PRR5_d1d5_fishers_prep <- fishers_prep(PRR5_CCG_cl_d1d5, fishers_col2, fishers_col4, PRR5, fishers_col1, fishers_col3)
+PRR7_d1d5_fishers_prep <- fishers_prep(PRR7_CCG_cl_d1d5, fishers_col2, fishers_col4, PRR7, fishers_col1, fishers_col3)
+LUX_d1d5_fishers_prep <- fishers_prep(LUX_CCG_cl_d1d5, fishers_col2, fishers_col4, LUX, fishers_col1, fishers_col3)
+ELF3_d1d5_fishers_prep <- fishers_prep(ELF3_CCG_cl_d1d5, fishers_col2, fishers_col4, ELF3, fishers_col1, fishers_col3)
+ELF4_d1d5_fishers_prep <- fishers_prep(ELF4_CCG_cl_d1d5, fishers_col2, fishers_col4, ELF4, fishers_col1, fishers_col3)
+
+get_odds <- function(df){
+  
+  odds<- df %>%
+    data.frame(apply(., 1, function(x) fisher.test(matrix(x, nr=2), alternative="greater")$estimate))
+  
+  return(odds)
+    
+}
+
+#d1-d2----
+LHY_d1d2_fishers <- get_odds(LHY_d1d2_fishers_prep)
+colnames(LHY_d1d2_fishers)[5] <- "LHY"
+LHY_d1d2_fishers <- LHY_d1d2_fishers %>% 
+  dplyr::select(LHY) %>% 
+  round(2)
+
+CCA1_d1d2_fishers <- get_odds(CCA1_d1d2_fishers_prep)
+colnames(CCA1_d1d2_fishers)[5] <- "CCA1"
+CCA1_d1d2_fishers <- CCA1_d1d2_fishers %>% 
+  dplyr::select(CCA1) %>% 
+  round(2)
+
+TOC1_d1d2_fishers <- get_odds(TOC1_d1d2_fishers_prep)
+colnames(TOC1_d1d2_fishers)[5] <- "TOC1"
+TOC1_d1d2_fishers <- TOC1_d1d2_fishers %>% 
+  dplyr::select(TOC1) %>% 
+  round(2)
+
+PRR5_d1d2_fishers <- get_odds(PRR5_d1d2_fishers_prep)
+colnames(PRR5_d1d2_fishers)[5] <- "PRR5"
+PRR5_d1d2_fishers <- PRR5_d1d2_fishers %>% 
+  dplyr::select(PRR5) %>% 
+  round(2)
+
+PRR7_d1d2_fishers <- get_odds(PRR7_d1d2_fishers_prep)
+colnames(PRR7_d1d2_fishers)[5] <- "PRR7"
+PRR7_d1d2_fishers <- PRR7_d1d2_fishers %>% 
+  dplyr::select(PRR7) %>% 
+  round(2)
+
+LUX_d1d2_fishers <- get_odds(LUX_d1d2_fishers_prep)
+colnames(LUX_d1d2_fishers)[5] <- "LUX"
+LUX_d1d2_fishers <- LUX_d1d2_fishers %>% 
+  dplyr::select(LUX) %>% 
+  round(2)
+
+ELF3_d1d2_fishers <- get_odds(ELF3_d1d2_fishers_prep)
+colnames(ELF3_d1d2_fishers)[5] <- "ELF3"
+ELF3_d1d2_fishers <- ELF3_d1d2_fishers %>% 
+  dplyr::select(ELF3) %>% 
+  round(2)
+
+ELF4_d1d2_fishers <- get_odds(ELF4_d1d2_fishers_prep)
+colnames(ELF4_d1d2_fishers)[5] <- "ELF4"
+ELF4_d1d2_fishers <- ELF4_d1d2_fishers %>% 
+  dplyr::select(ELF4) %>% 
+  round(2)
+
+odds_d1d2 <- bind_cols(clusters_d1d2,
+                       LHY_d1d2_fishers, CCA1_d1d2_fishers, TOC1_d1d2_fishers, PRR5_d1d2_fishers,
+                       PRR7_d1d2_fishers, LUX_d1d2_fishers, ELF3_d1d2_fishers, ELF4_d1d2_fishers) %>% 
+  left_join(TF_network_clusters_count) %>% 
+  dplyr::rename(cluster_size = cluster_number) %>% 
+  relocate(cluster_size, .before = LHY)
+
+#d1-d5----
+LHY_d1d5_fishers <- get_odds(LHY_d1d5_fishers_prep)
+colnames(LHY_d1d5_fishers)[5] <- "LHY"
+LHY_d1d5_fishers <- LHY_d1d5_fishers %>% 
+  dplyr::select(LHY) %>% 
+  round(2)
+
+CCA1_d1d5_fishers <- get_odds(CCA1_d1d5_fishers_prep)
+colnames(CCA1_d1d5_fishers)[5] <- "CCA1"
+CCA1_d1d5_fishers <- CCA1_d1d5_fishers %>% 
+  dplyr::select(CCA1) %>% 
+  round(2)
+
+TOC1_d1d5_fishers <- get_odds(TOC1_d1d5_fishers_prep)
+colnames(TOC1_d1d5_fishers)[5] <- "TOC1"
+TOC1_d1d5_fishers <- TOC1_d1d5_fishers %>% 
+  dplyr::select(TOC1) %>% 
+  round(2)
+
+PRR5_d1d5_fishers <- get_odds(PRR5_d1d5_fishers_prep)
+colnames(PRR5_d1d5_fishers)[5] <- "PRR5"
+PRR5_d1d5_fishers <- PRR5_d1d5_fishers %>% 
+  dplyr::select(PRR5) %>% 
+  round(2)
+
+PRR7_d1d5_fishers <- get_odds(PRR7_d1d5_fishers_prep)
+colnames(PRR7_d1d5_fishers)[5] <- "PRR7"
+PRR7_d1d5_fishers <- PRR7_d1d5_fishers %>% 
+  dplyr::select(PRR7) %>% 
+  round(2)
+
+LUX_d1d5_fishers <- get_odds(LUX_d1d5_fishers_prep)
+colnames(LUX_d1d5_fishers)[5] <- "LUX"
+LUX_d1d5_fishers <- LUX_d1d5_fishers %>% 
+  dplyr::select(LUX) %>% 
+  round(2)
+
+ELF3_d1d5_fishers <- get_odds(ELF3_d1d5_fishers_prep)
+colnames(ELF3_d1d5_fishers)[5] <- "ELF3"
+ELF3_d1d5_fishers <- ELF3_d1d5_fishers %>% 
+  dplyr::select(ELF3) %>% 
+  round(2)
+
+ELF4_d1d5_fishers <- get_odds(ELF4_d1d5_fishers_prep)
+colnames(ELF4_d1d5_fishers)[5] <- "ELF4"
+ELF4_d1d5_fishers <- ELF4_d1d5_fishers %>% 
+  dplyr::select(ELF4) %>% 
+  round(2)
+
+odds_d1d5 <- bind_cols(clusters_d1d5,
+                       LHY_d1d5_fishers, CCA1_d1d5_fishers, TOC1_d1d5_fishers, PRR5_d1d5_fishers,
+                       PRR7_d1d5_fishers, LUX_d1d5_fishers, ELF3_d1d5_fishers, ELF4_d1d5_fishers) %>% 
+  left_join(TF_network_clusters_count) %>% 
+  dplyr::rename(cluster_size = cluster_number) %>% 
+  relocate(cluster_size, .before = LHY)
+
+
+
+
+
