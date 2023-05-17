@@ -1173,86 +1173,9 @@ col_fun=colorRamp2(c(0,15,30), c('white','blue','red'))
 
 col_fun(seq(-5,5))
 
-# csize_hmap <- c(662, 572, 570, 455, 339, 543, 273, 168, 153, 222, 
-#                 130, 125, 124, 121, 121, 108, 107, 104, 87, 128, 
-#                 83, 80, 76, 76, 71, 116, 66, 65, 78, 106, 
-#                 88, 57, 56, 55, 54, 91, 54, 46, 44, 44, 
-#                 40, 38, 38, 36, 34, 62, 32, 30, 30, 29, 
-#                 27, 25, 25, 25, 23, 21, 19, 17, 17, 16, 
-#                 16, 38, 16, 15, 15, 13, 11, 10, 9, 8,
-#                 7, 6, 5, 5)
-
-#ha_bar_hmap <- HeatmapAnnotation(size = anno_barplot(csize_hmap))
-
-row_ha_hmap = rowAnnotation(foo = odds_d1d2$group, bar = anno_barplot(odds_d1d2$cluster_size, axis= TRUE, axis_param = list(side='bottom', at = c(0, 200, 400, 600), labels = c("0", "200", "400", "600"), labels_rot = 45), gp = gpar(fill = 'green')), annotation_label = "", width = unit(2, "cm"))
+#row_ha_hmap = rowAnnotation(foo = odds_d1d2$group, bar = anno_barplot(odds_d1d2$cluster_size, axis= TRUE, axis_param = list(side='bottom', at = c(0, 200, 400, 600), labels = c("0", "200", "400", "600"), labels_rot = 45), gp = gpar(fill = 'green')), annotation_label = "", width = unit(2, "cm"))
 
 row_ha_hmap2 = rowAnnotation(context = odds_d1d2$group, size = anno_barplot(odds_d1d2$cluster_size), col = list(context = c("gain high" = "#31a354", "gain medium" = "#74c476", "other" = "#cccccc", "lose medium" = "#fb6a4a", "lose high" = "#de2d26")), show_legend = FALSE)
-
-?rowAnnotation
-ha = HeatmapAnnotation(bar = odds_d1d2$group)
-draw(row_ha_hmap)
-groups_d1d2 <- odds_d1d2 %>% 
-  dplyr::select(group) %>% 
-  mutate(cluster_code = case_when(group == 'gain high' ~ 1,
-                                  group == 'gain medium' ~ 2,
-                                  group == 'lose high' ~ 3,
-                                  group == 'lose medium' ~ 4,
-                                  TRUE ~ 5)) %>% 
-  dplyr::select(-group)
-
-ha = HeatmapAnnotation(bar = odds_d1d2$group)
-draw(ha)
-#row_ha_hmap2 = rowAnnotation((foo1 = csize_hmap))
-
-# gpar_fill <- odds_d1d2 %>% 
-#   dplyr::select(group) %>% 
-#   dplyr::mutate(gpar = case_when(group == 'gain high' ~ 7,
-#                                  group == 'gain medium' ~ 3,
-#                                  group == 'lose high' ~ 8,
-#                                  group == 'lose medium' ~ 1,
-#                                  TRUE ~ 2)) %>% 
-#   dplyr::select(-group)
-# 
-# gpar_fill <- gpar_fill %>% 
-#   apply(.,1,as.list)
-# 
-# str(gpar_fill)
-# 
-# row_ha = rowAnnotation(size = anno_barplot(df_bp, axis= TRUE, axis_param = list(side='bottom', at = c(0, 200, 400, 600),
-#                                                                                 labels = c("0", "200", "400", "600"), 
-#                                                                                 labels_rot = 45), 
-#                                            gp = gpar(fill = 'green')), 
-#                        annotation_label = "", width = unit(2, "cm"))
-
-# Heatmap(odds_d1d2_matrix, 
-#         name='Odds Ratio', 
-#         heatmap_legend_param = list(at = c(0, 10, 20), 
-#                                     labels = c(0, 10, 20),
-#                                     title = "Odds Ratio",
-#                                     legend_height = unit(4, "cm"), 
-#                                     title_position = "lefttop-rot",
-#                                     border="gray40"),
-#         column_names_rot = 45, 
-#         column_title = NULL, 
-#         rect_gp = gpar(col = "gray40", lwd = 1), 
-#         col=col_fun, 
-#         right_annotation = row_ha, 
-#         row_title=NULL, 
-#         row_dend_width = unit(2, "cm"), 
-#         row_names_gp = gpar(fontsize = 8), 
-#         row_gap = unit(2, "mm"), 
-#         column_km=6, 
-#         column_km_repeats = 100, 
-#         column_gap = unit(2, "mm"), 
-#         left_annotation = rowAnnotation(foo = anno_block(gp = gpar(fill = c(7,7,7,7,7)), 
-#                                                          labels = c("g1", "g2", "g3", "g4", "g5"),
-#                                                          labels_gp = gpar(col = "black", fontsize = 10))), 
-#         row_km=5, 
-#         row_km_repeats = 100, 
-#         cell_fun = function(j, i, x, y, width, height, fill) {if(odds_d1d2_matrix[i, j] > 5) grid.text(sprintf("%.1f", odds_d1d2_matrix[i, j]), x, y, gp = gpar(fontsize = 9, col='white'))})
-# 
-# ht1 = Heatmap(odds_d1d2_matrix, row_km=5, row_km_repeats = 100, column_km=6, column_km_repeats = 100)
-# ht1
 
 m=Heatmap(odds_d1d2_matrix,
           name='Odds Ratio', 
@@ -1281,29 +1204,29 @@ m=Heatmap(odds_d1d2_matrix,
                                                            labels_gp = gpar(col = "black", fontsize = 10))), 
           row_km=4, 
           row_km_repeats = 100, 
-          cell_fun = function(j, i, x, y, width, height, fill) {if(odds_d1d2_matrix[i, j] > 5) grid.text(sprintf("%.1f", odds_d1d2_matrix[i, j]), x, y, gp = gpar(fontsize =8, col='black'))}, use_raster=TRUE)
+          cell_fun = function(j, i, x, y, width, height, fill) {if(odds_d1d2_matrix[i, j] > 5) grid.text(sprintf("%.1f", odds_d1d2_matrix[i, j]), x, y, gp = gpar(fontsize =8, col='white'))})
 
-m
-
-lgd1 = Legend(labels=c("Gain High", "Gain Medium", "Other", "Lose Medium", "Lose High"), title = "cluster context", type = "bar", legend_gp = gpar(col=c('#31a354', '#74c476', '#cccccc', '#fb6a4a', '#de2d26')))
-draw(annotation_legend = lgd1)
 
 lgd_list=list(Legend(labels=c("Gain High", "Gain Medium", "Other", "Lose Medium", "Lose High"), title="cluster context", type = "points", pch=15, title_gp = gpar(fontsize = 10), size=unit(5,"mm"), border="black", legend_gp=gpar(col=c('#31a354', '#74c476', '#cccccc', '#fb6a4a', '#de2d26'))))
 
 draw(m, heatmap_legend_side = "bottom", annotation_legend_list = lgd_list)
+
 decorate_annotation("size", {grid.text("cluster size", y = unit(1, "npc") + unit(2, "mm"), just = "bottom", gp = gpar(fontsize = 10))})
-m = draw(m)
+
+# https://jokergoo.github.io/2020/05/11/set-cell-width/height-in-the-heatmap/
+
+m = draw(m, heatmap_legend_side = "bottom", annotation_legend_list = lgd_list)
 w = ComplexHeatmap:::width(m)
 w = convertX(w, "inch", valueOnly = TRUE)
 h = ComplexHeatmap:::height(m)
 h = convertY(h, "inch", valueOnly = TRUE)
 c(w, h)
-?pdf
-pdf(file="./03_plots/Complex_heatmap_d1d2.pdf", width = 5.444444, height = 5.944444)
 
-m=Heatmap(odds_d1d2_matrix,
-          name='Odds Ratio', 
-          heatmap_legend_param = list(legend_direction = "horizontal", 
+pdf(file="./03_plots/Complex_heatmap_d1d2.pdf", width=w,height=h)
+png(file="./03_plots/Complex_heatmap_d1d2.pdf", width=w,height=h,units="in",res=1200)
+Heatmap(odds_d1d2_matrix,
+        name='Odds Ratio', 
+        heatmap_legend_param = list(legend_direction = "horizontal", 
                                       title_gp = gpar(fontsize = 10), 
                                       legend_width = unit(5, "cm"), at = c(0, 5, 10, 15, 20, 25, 30), 
                                       labels = c(0, 5, 10, 15, 20, 25, 30), 
@@ -1316,142 +1239,57 @@ m=Heatmap(odds_d1d2_matrix,
           col=col_fun, 
           right_annotation = row_ha_hmap2, 
           row_title=NULL, 
-          row_dend_width = unit(1, "cm"), 
-          row_names_gp = gpar(fontsize = 5), 
+          row_dend_width = unit(4, "cm"), 
+          row_names_gp = gpar(fontsize = 8), 
           row_gap = unit(2, "mm"), 
           column_km=6, 
           column_km_repeats = 100,
-          column_dend_height = unit(1, "cm"),
-          column_gap = unit(2, "mm"), 
+          column_dend_height = unit(2, "cm"),
+          column_gap = unit(5, "mm"), 
           left_annotation = rowAnnotation(foo = anno_block(gp = gpar(fill = c(8,8,8,8)), 
                                                            labels = c("g1", "g2", "g3", "g4"),
                                                            labels_gp = gpar(col = "black", fontsize = 10))), 
           row_km=4, 
           row_km_repeats = 100, 
-          cell_fun = function(j, i, x, y, width, height, fill) {if(odds_d1d2_matrix[i, j] > 5) grid.text(sprintf("%.1f", odds_d1d2_matrix[i, j]), x, y, gp = gpar(fontsize =5, col='white'))}, use_raster=TRUE)
+          cell_fun = function(j, i, x, y, width, height, fill) {if(odds_d1d2_matrix[i, j] > 5) grid.text(sprintf("%.1f", odds_d1d2_matrix[i, j]), x, y, gp = gpar(fontsize =8, col='black'))})
 
 draw(m, heatmap_legend_side = "bottom", annotation_legend_list = lgd_list)
-
 decorate_annotation("size", {grid.text("cluster size", y = unit(1, "npc") + unit(2, "mm"), just = "bottom", gp = gpar(fontsize = 10))})
 
 dev.off()
 
+png(file="./03_plots/Complex_heatmap_d1d2.png")
+ht <- Heatmap(odds_d1d2_matrix,
+              name='Odds Ratio', 
+              heatmap_legend_param = list(legend_direction = "horizontal", 
+                                          title_gp = gpar(fontsize = 10), 
+                                          legend_width = unit(5, "cm"), at = c(0, 5, 10, 15, 20, 25, 30), 
+                                          labels = c(0, 5, 10, 15, 20, 25, 30), 
+                                          title = "Odds Ratio", 
+                                          legend_height = unit(4, "cm"), 
+                                          title_position = "topleft", border="gray40"), 
+              column_names_rot = 45, 
+              column_title = NULL, 
+              rect_gp = gpar(col = "gray40", lwd = 1), 
+              col=col_fun, 
+              right_annotation = row_ha_hmap2, 
+              row_title=NULL, 
+              row_dend_width = unit(4, "cm"), 
+              row_names_gp = gpar(fontsize = 8), 
+              row_gap = unit(2, "mm"), 
+              column_km=6, 
+              column_km_repeats = 100,
+              column_dend_height = unit(2, "cm"),
+              column_gap = unit(5, "mm"), 
+              left_annotation = rowAnnotation(foo = anno_block(gp = gpar(fill = c(8,8,8,8)), 
+                                                               labels = c("g1", "g2", "g3", "g4"),
+                                                               labels_gp = gpar(col = "black", fontsize = 10))), 
+              row_km=4, 
+              row_km_repeats = 100, 
+              cell_fun = function(j, i, x, y, width, height, fill) {if(odds_d1d2_matrix[i, j] > 5) grid.text(sprintf("%.1f", odds_d1d2_matrix[i, j]), x, y, gp = gpar(fontsize =8, col='black'))})
+draw(ht)
+dev.off()
 
-#decorate_row_title("", {grid.text("#", y = unit(1, "npc") + unit(2, "mm"), just = "bottom", gp = gpar(fontsize = 10))})
 
-TF_chm1_LGcl20<-read.table(file="./00_raw_data/TFnetwork Clock ORs ggplot corrected Jan2022 KamiokaLGcl20.csv", 
-                           sep=",", 
-                           header=TRUE, 
-                           colClasses=c('numeric','NULL','NULL','numeric','numeric','numeric','numeric','numeric','numeric','numeric','numeric'))
 
-TF_chm1_mat_LGcl20<-as.matrix(TF_chm1_LGcl20)
 
-csize_test<-c(455, 168, 153, 222, 130, 124, 121, 121, 107, 104, 128, 57, 55, 44, 32, 30, 38)
-
-TF_chm1_LGcl20_all<-read.table(file="./00_raw_data/TFnetwork Clock ORs ggplot corrected Jan2022 KamiokaLGcl20.csv", 
-                               sep=",", 
-                               header=TRUE, 
-                               colClasses=c('numeric','numeric','NULL','numeric','numeric','numeric','numeric','numeric','numeric','numeric','numeric'))
-
-df_bp_test <- data.frame(TF_chm1_LGcl20_all$cluster.size)
-df_bp_test2 <- data.frame(TF_chm1_LGcl20_all$Cluster)
-
-colnames(df_bp_test2) <- 'cluster'
-
-row_ha_test = rowAnnotation(size = anno_barplot(df_bp_test, 
-                                                axis= TRUE, 
-                                                axis_param = list(side='bottom', 
-                                                                  at = c(0, 100, 200, 300, 400), 
-                                                                  labels = c("0", "100", "200", "300", "400"), 
-                                                                  labels_rot = 45), 
-                                                gp = gpar(fill = c(7,7,3,3,7,7,7,7,3,7,3,7,3,7,7,7,3))), 
-                            annotation_label = "", width = unit(2, "cm"))
-
-row_ha_mark_test = rowAnnotation(foo = anno_mark(at = c(1, 14:17), 
-                                                 labels = c("cl9", "cl10", "cl20", "cl34", "cl9" )))
-
-lgd_list_test=list(Legend(labels=c("lose","gain"), 
-                          title="context", 
-                          type = "points", 
-                          pch=15, 
-                          title_gp = gpar(fontsize = 10), 
-                          size=unit(5,"mm"), 
-                          border="black", 
-                          legend_gp=gpar(col=c(7,3))))
-
-m_test = Heatmap(TF_chm1_mat_LGcl20, 
-                 name='Odds Ratio', 
-                 heatmap_legend_param = list(legend_direction = "horizontal", 
-                                             title_gp = gpar(fontsize = 10), 
-                                             legend_width = unit(5, "cm"), at = c(0, 5, 10, 15, 20, 25, 30), 
-                                             labels = c(0, 5, 10, 15, 20, 25, 30), 
-                                             title = "Odds Ratio", 
-                                             legend_height = unit(4, "cm"), 
-                                             title_position = "topleft", 
-                                             border="gray40"), 
-                 column_names_rot = 45, 
-                 column_title = NULL, 
-                 rect_gp = gpar(col = "gray40", lwd = 1), 
-                 col=col_fun, 
-                 right_annotation = row_ha_test, 
-                 row_title=NULL, 
-                 row_dend_width = unit(2, "cm"), 
-                 row_names_gp = gpar(fontsize = 10), 
-                 row_gap = unit(2, "mm"), 
-                 column_km=3, 
-                 column_km_repeats = 100, 
-                 column_gap = unit(2, "mm"), 
-                 left_annotation = rowAnnotation(foo = anno_block(gp = gpar(fill = c(7,8,3,3)), 
-                                                                  labels = c("g1", "g2", "g3", "g4"),
-                                                                  labels_gp = gpar(col = "black", fontsize = 10))), 
-                 row_km=4, 
-                 row_km_repeats = 100, 
-                 cell_fun = function(j, i, x, y, width, height, fill) {if(TF_chm1_mat_LGcl20[i, j] > 5) grid.text(sprintf("%.1f", TF_chm1_mat_LGcl20[i, j]), x, y, gp = gpar(fontsize =10, col='black'))})
-
-draw(m_test2, heatmap_legend_side = "bottom", annotation_legend_list = lgd_list_test)
-decorate_annotation("size", {grid.text("cluster size", y = unit(1, "npc") + unit(2, "mm"), just = "bottom", gp = gpar(fontsize = 10))})
-
-m_test2 = Heatmap(TF_chm1_mat_LGcl20, 
-                  name='Odds Ratio', 
-                  heatmap_legend_param = list(legend_direction = "horizontal", 
-                                              title_gp = gpar(fontsize = 10), 
-                                              legend_width = unit(5, "cm"), 
-                                              at = c(0, 5, 10, 15, 20, 25, 30), 
-                                              labels = c(0, 5, 10, 15, 20, 25, 30), 
-                                              title = "Odds Ratio", 
-                                              legend_height = unit(4, "cm"), 
-                                              title_position = "topleft", 
-                                              border="gray40"), 
-                  column_names_rot = 45, 
-                  column_title = NULL, 
-                  rect_gp = gpar(col = "gray40", lwd = 1), 
-                  col=col_fun, 
-                  right_annotation = row_ha_test, 
-                  row_title=NULL, 
-                  row_dend_width = unit(2, "cm"), 
-                  row_names_gp = gpar(fontsize = 10), 
-                  row_gap = unit(2, "mm"), 
-                  column_km=3, 
-                  column_km_repeats = 100, 
-                  column_gap = unit(2, "mm"), 
-                  left_annotation = rowAnnotation(foo = anno_block(gp = gpar(fill = c(7,8,3,3)), 
-                                                                   labels = c("g1", "g2", "g3", "g4"),
-                                                                   labels_gp = gpar(col = "black", fontsize = 10))), 
-                  row_km=4, row_km_repeats = 100, cell_fun = function(j, i, x, y, width, height, fill) {if(TF_chm1_mat_LGcl20[i, j] > 5) grid.text(sprintf("%.1f", TF_chm1_mat_LGcl20[i, j]), x, y, gp = gpar(fontsize =12, col='black'))}, use_raster=TRUE) +
-  rowAnnotation(cluster = anno_numeric(c(4, 8, 9, 10, 11, 13, 14, 15, 17, 18, 20, 32, 34, 40, 47, 48, 62)))
-
-m_test2
-glimpse(df_bp_test2)
-?rowAnnotation
-class(odds_d1d2_matrix)
-
-TF_chm1_mat_LGcl20<-as.matrix(TF_chm1_LGcl20)
-
-Heatmap(odds_d1d2_matrix)
-
-set.seed(123)
-mat = matrix(rnorm(100), 10)
-rownames(mat) = paste0('R', 1:10)
-colnames(mat) = paste('C', 1:10)
-
-rownames(TF_chm1_LGcl20[,1])
