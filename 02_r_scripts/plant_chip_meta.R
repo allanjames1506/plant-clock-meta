@@ -6,6 +6,11 @@ library(MetaCycle)
 devtools::install_github("vqv/ggbiplot")
 library(ggbiplot)
 library(ggrepel)
+library(circlize)
+
+library(devtools)
+install_github("jokergoo/ComplexHeatmap")
+library(ComplexHeatmap)
 
 setwd("/Users/Allan/Documents/plant_ChIP_meta/")
 
@@ -661,7 +666,8 @@ plot_clock_d1d2 <- clock_d1_d2 %>%
   geom_bar(position = 'stack', stat = 'identity') +
   ggpubr::theme_pubr() +
   theme(legend.position = "right") +
-  labs(fill = 'Amplitude', y = 'Proportion (%)') +
+  theme(axis.text.x=element_text(angle=30, hjust=1, vjust=1)) +
+  labs(fill = 'Amplitude', y = 'Proportion (%)', x = '') +
   ggtitle("Amplitude patterns for clock targets",
           subtitle = "Compare day 1 (20C steady state) with day 2 (to 4C transient-cooling)") 
 
@@ -678,7 +684,8 @@ plot_clock_d1d5 <- clock_d1_d5 %>%
   geom_bar(position = 'stack', stat = 'identity') +
   ggpubr::theme_pubr() +
   theme(legend.position = "right") +
-  labs(fill = 'Amplitude', y = 'Proportion (%)') +
+  theme(axis.text.x=element_text(angle=30, hjust=1, vjust=1)) +
+  labs(fill = 'Amplitude', y = 'Proportion (%)', x = '') +
   ggtitle("Amplitude patterns for clock targets",
           subtitle = "Compare day 1 (20C steady state) with Day 5 (4C steady state)") 
 
@@ -1155,7 +1162,8 @@ odds_d1d5 <- bind_cols(clusters_d1d5,
   relocate(cluster_size, .before = LHY)
 
 #heatmaps----
-
+#d1-d2----
+#* full----
 odds_d1d2_matrix <- odds_d1d2 %>%
   dplyr::select(4:11)
   
@@ -1163,133 +1171,230 @@ odds_d1d2_matrix<-as.matrix(odds_d1d2_matrix)
 
 rownames(odds_d1d2_matrix) <- 1:74
 
-df_bp1 <- data.frame(odds_d1d2$group)
-df_bp2 <- data.frame(odds_d1d2$cluster_size)
+col_fun = colorRamp2(c(0,15,30), c('white','blue','red'))
 
-colnames(df_bp1) <- 'group'
-colnames(df_bp2) <- 'size'
-
-col_fun=colorRamp2(c(0,15,30), c('white','blue','red'))
+col_fun2 = colorRamp2(c(0,15,35), c('#FFFFFFFF','#9ecae1','#3182bd'))
 
 col_fun(seq(-5,5))
+col_fun2(seq(-5,5))
 
-#row_ha_hmap = rowAnnotation(foo = odds_d1d2$group, bar = anno_barplot(odds_d1d2$cluster_size, axis= TRUE, axis_param = list(side='bottom', at = c(0, 200, 400, 600), labels = c("0", "200", "400", "600"), labels_rot = 45), gp = gpar(fill = 'green')), annotation_label = "", width = unit(2, "cm"))
+row_ha_hmap_d1d2_full = rowAnnotation(context = odds_d1d2$group, size = anno_barplot(odds_d1d2$cluster_size), col = list(context = c("gain high" = "#31a354", "gain medium" = "#74c476", "other" = "#cccccc", "lose medium" = "#fb6a4a", "lose high" = "#de2d26")), show_legend = FALSE)
 
-row_ha_hmap2 = rowAnnotation(context = odds_d1d2$group, size = anno_barplot(odds_d1d2$cluster_size), col = list(context = c("gain high" = "#31a354", "gain medium" = "#74c476", "other" = "#cccccc", "lose medium" = "#fb6a4a", "lose high" = "#de2d26")), show_legend = FALSE)
-
-m=Heatmap(odds_d1d2_matrix,
-          name='Odds Ratio', 
-          heatmap_legend_param = list(legend_direction = "horizontal", 
+m_d1d2 = Heatmap(odds_d1d2_matrix,
+                 name='Odds Ratio', 
+                 heatmap_legend_param = list(legend_direction = "horizontal", 
                                       title_gp = gpar(fontsize = 10), 
                                       legend_width = unit(5, "cm"), at = c(0, 5, 10, 15, 20, 25, 30), 
                                       labels = c(0, 5, 10, 15, 20, 25, 30), 
                                       title = "Odds Ratio", 
                                       legend_height = unit(4, "cm"), 
                                       title_position = "topleft", border="gray40"), 
-          column_names_rot = 45, 
-          column_title = NULL, 
-          rect_gp = gpar(col = "gray40", lwd = 1), 
-          col=col_fun, 
-          right_annotation = row_ha_hmap2, 
-          row_title=NULL, 
-          row_dend_width = unit(4, "cm"), 
-          row_names_gp = gpar(fontsize = 8), 
-          row_gap = unit(2, "mm"), 
-          column_km=6, 
-          column_km_repeats = 100,
-          column_dend_height = unit(2, "cm"),
-          column_gap = unit(5, "mm"), 
-          left_annotation = rowAnnotation(foo = anno_block(gp = gpar(fill = c(8,8,8,8)), 
+                 column_names_rot = 45, 
+                 column_title = NULL, 
+                 rect_gp = gpar(col = "gray40", lwd = 1), 
+                 col=col_fun2,
+                 right_annotation = row_ha_hmap_d1d2_full,
+                 row_title=NULL, 
+                 row_dend_width = unit(4, "cm"), 
+                 row_names_gp = gpar(fontsize = 8), 
+                 row_gap = unit(2, "mm"), 
+                 column_km=6, 
+                 column_km_repeats = 100,
+                 column_dend_height = unit(2, "cm"),
+                 column_gap = unit(5, "mm"), 
+                 left_annotation = rowAnnotation(foo = anno_block(gp = gpar(fill = c(8,8,8,8)), 
                                                            labels = c("g1", "g2", "g3", "g4"),
                                                            labels_gp = gpar(col = "black", fontsize = 10))), 
-          row_km=4, 
-          row_km_repeats = 100, 
-          cell_fun = function(j, i, x, y, width, height, fill) {if(odds_d1d2_matrix[i, j] > 5) grid.text(sprintf("%.1f", odds_d1d2_matrix[i, j]), x, y, gp = gpar(fontsize =8, col='white'))})
+                 row_km=4, 
+                 row_km_repeats = 100, 
+                 cell_fun = function(j, i, x, y, width, height, fill) {if(odds_d1d2_matrix[i, j] > 5) grid.text(sprintf("%.1f", odds_d1d2_matrix[i, j]), x, y, gp = gpar(fontsize =8, col='black'))})
 
 
 lgd_list=list(Legend(labels=c("Gain High", "Gain Medium", "Other", "Lose Medium", "Lose High"), title="cluster context", type = "points", pch=15, title_gp = gpar(fontsize = 10), size=unit(5,"mm"), border="black", legend_gp=gpar(col=c('#31a354', '#74c476', '#cccccc', '#fb6a4a', '#de2d26'))))
 
-draw(m, heatmap_legend_side = "bottom", annotation_legend_list = lgd_list)
+draw(m_d1d2, heatmap_legend_side = "bottom", annotation_legend_list = lgd_list)
 
 decorate_annotation("size", {grid.text("cluster size", y = unit(1, "npc") + unit(2, "mm"), just = "bottom", gp = gpar(fontsize = 10))})
 
 # https://jokergoo.github.io/2020/05/11/set-cell-width/height-in-the-heatmap/
 
-m = draw(m, heatmap_legend_side = "bottom", annotation_legend_list = lgd_list)
+m = draw(m_d1d2, heatmap_legend_side = "bottom", annotation_legend_list = lgd_list)
 w = ComplexHeatmap:::width(m)
 w = convertX(w, "inch", valueOnly = TRUE)
 h = ComplexHeatmap:::height(m)
 h = convertY(h, "inch", valueOnly = TRUE)
 c(w, h)
 
-pdf(file="./03_plots/Complex_heatmap_d1d2.pdf", width=w,height=h)
-png(file="./03_plots/Complex_heatmap_d1d2.pdf", width=w,height=h,units="in",res=1200)
-Heatmap(odds_d1d2_matrix,
-        name='Odds Ratio', 
-        heatmap_legend_param = list(legend_direction = "horizontal", 
-                                      title_gp = gpar(fontsize = 10), 
-                                      legend_width = unit(5, "cm"), at = c(0, 5, 10, 15, 20, 25, 30), 
-                                      labels = c(0, 5, 10, 15, 20, 25, 30), 
-                                      title = "Odds Ratio", 
-                                      legend_height = unit(4, "cm"), 
-                                      title_position = "topleft", border="gray40"), 
-          column_names_rot = 45, 
-          column_title = NULL, 
-          rect_gp = gpar(col = "gray40", lwd = 1), 
-          col=col_fun, 
-          right_annotation = row_ha_hmap2, 
-          row_title=NULL, 
-          row_dend_width = unit(4, "cm"), 
-          row_names_gp = gpar(fontsize = 8), 
-          row_gap = unit(2, "mm"), 
-          column_km=6, 
-          column_km_repeats = 100,
-          column_dend_height = unit(2, "cm"),
-          column_gap = unit(5, "mm"), 
-          left_annotation = rowAnnotation(foo = anno_block(gp = gpar(fill = c(8,8,8,8)), 
-                                                           labels = c("g1", "g2", "g3", "g4"),
-                                                           labels_gp = gpar(col = "black", fontsize = 10))), 
-          row_km=4, 
-          row_km_repeats = 100, 
-          cell_fun = function(j, i, x, y, width, height, fill) {if(odds_d1d2_matrix[i, j] > 5) grid.text(sprintf("%.1f", odds_d1d2_matrix[i, j]), x, y, gp = gpar(fontsize =8, col='black'))})
+# dev.off()
+# plot(rnorm(50), rnorm(50))
+# dev.cur()
+# dev.off(2)
 
-draw(m, heatmap_legend_side = "bottom", annotation_legend_list = lgd_list)
+#* trimmed----
+odds_d1d2_trimmed <- odds_d1d2 %>%
+  filter_at(vars(LHY:ELF4), any_vars(.>5)) 
+  
+odds_d1d2_trimmed_matrix <- odds_d1d2_trimmed %>%
+  dplyr::select(4:11)
+  
+odds_d1d2_trimmed_matrix <- as.matrix(odds_d1d2_trimmed_matrix)
+
+rownames(odds_d1d2_trimmed_matrix) <- c(9, 10, 11, 20, 22, 24, 25, 29, 31, 34, 38, 42, 44, 52, 56, 58, 65, 67, 71, 72)
+
+row_ha_hmap_d1d2_trimmed = rowAnnotation(context = odds_d1d2_trimmed$group, size = anno_barplot(odds_d1d2_trimmed$cluster_size), col = list(context = c("gain high" = "#31a354", "gain medium" = "#74c476", "other" = "#cccccc", "lose medium" = "#fb6a4a", "lose high" = "#de2d26")), show_legend = FALSE)
+draw(row_ha_hmap_d1d2_trimmed)
+m_d1d2_trimmed = Heatmap(odds_d1d2_trimmed_matrix,
+                         name='Odds Ratio',
+                         heatmap_legend_param = list(legend_direction = "horizontal", 
+                                                     title_gp = gpar(fontsize = 10), 
+                                                     legend_width = unit(5, "cm"), at = c(0, 5, 10, 15, 20, 25, 30, 35), 
+                                                     labels = c(0, 5, 10, 15, 20, 25, 30, 35), 
+                                                     title = "Odds Ratio",
+                                                     legend_height = unit(4, "cm"), 
+                                                     title_position = "topleft", border="gray40"), 
+                         column_names_rot = 45, 
+                         column_title = NULL, 
+                         rect_gp = gpar(col = "gray40", lwd = 1), 
+                         col=col_fun2,
+                         right_annotation = row_ha_hmap_d1d2_trimmed,
+                         row_title=NULL, 
+                         row_dend_width = unit(4, "cm"),
+                         row_names_gp = gpar(fontsize = 10), 
+                         row_gap = unit(2, "mm"), 
+                         column_km=6, 
+                         column_km_repeats = 100,
+                         column_dend_height = unit(2, "cm"),
+                         column_gap = unit(5, "mm"), 
+                         left_annotation = rowAnnotation(foo = anno_block(gp = gpar(fill = c(8,8,8,8)), 
+                                                                  labels = c("g1", "g2", "g3", "g4"),
+                                                                  labels_gp = gpar(col = "black", fontsize = 10))), 
+                         row_km=4, 
+                         row_km_repeats = 100,
+                         cell_fun = function(j, i, x, y, width, height, fill) {if(odds_d1d2_trimmed_matrix[i, j] > 5) grid.text(sprintf("%.1f", odds_d1d2_trimmed_matrix[i, j]), x, y, gp = gpar(fontsize =11, col='black', fontface = 'bold'))})
+
+
+lgd_list=list(Legend(labels=c("Gain High", "Gain Medium", "Other", "Lose Medium", "Lose High"), title="cluster context", type = "points", pch=15, title_gp = gpar(fontsize = 10), size=unit(5,"mm"), border="black", legend_gp=gpar(col=c('#31a354', '#74c476', '#cccccc', '#fb6a4a', '#de2d26'))))
+
+draw(m_d1d2_trimmed, heatmap_legend_side = "bottom", annotation_legend_list = lgd_list)
+
 decorate_annotation("size", {grid.text("cluster size", y = unit(1, "npc") + unit(2, "mm"), just = "bottom", gp = gpar(fontsize = 10))})
 
-dev.off()
+# https://jokergoo.github.io/2020/05/11/set-cell-width/height-in-the-heatmap/
 
-png(file="./03_plots/Complex_heatmap_d1d2.png")
-ht <- Heatmap(odds_d1d2_matrix,
-              name='Odds Ratio', 
-              heatmap_legend_param = list(legend_direction = "horizontal", 
-                                          title_gp = gpar(fontsize = 10), 
-                                          legend_width = unit(5, "cm"), at = c(0, 5, 10, 15, 20, 25, 30), 
-                                          labels = c(0, 5, 10, 15, 20, 25, 30), 
-                                          title = "Odds Ratio", 
-                                          legend_height = unit(4, "cm"), 
-                                          title_position = "topleft", border="gray40"), 
-              column_names_rot = 45, 
-              column_title = NULL, 
-              rect_gp = gpar(col = "gray40", lwd = 1), 
-              col=col_fun, 
-              right_annotation = row_ha_hmap2, 
-              row_title=NULL, 
-              row_dend_width = unit(4, "cm"), 
-              row_names_gp = gpar(fontsize = 8), 
-              row_gap = unit(2, "mm"), 
-              column_km=6, 
-              column_km_repeats = 100,
-              column_dend_height = unit(2, "cm"),
-              column_gap = unit(5, "mm"), 
-              left_annotation = rowAnnotation(foo = anno_block(gp = gpar(fill = c(8,8,8,8)), 
-                                                               labels = c("g1", "g2", "g3", "g4"),
-                                                               labels_gp = gpar(col = "black", fontsize = 10))), 
-              row_km=4, 
-              row_km_repeats = 100, 
-              cell_fun = function(j, i, x, y, width, height, fill) {if(odds_d1d2_matrix[i, j] > 5) grid.text(sprintf("%.1f", odds_d1d2_matrix[i, j]), x, y, gp = gpar(fontsize =8, col='black'))})
-draw(ht)
-dev.off()
+m = draw(m_d1d2_trimmed, heatmap_legend_side = "bottom", annotation_legend_list = lgd_list)
+w = ComplexHeatmap:::width(m)
+w = convertX(w, "inch", valueOnly = TRUE)
+h = ComplexHeatmap:::height(m)
+h = convertY(h, "inch", valueOnly = TRUE)
+c(w, h)
+
+#d1-d5----
+
+odds_d1d5_matrix <- odds_d1d5 %>%
+  dplyr::select(4:11)
+
+odds_d1d5_matrix<-as.matrix(odds_d1d5_matrix)
+
+rownames(odds_d1d5_matrix) <- 1:74
+
+row_ha_hmap_d1d5_full = rowAnnotation(context = odds_d1d5$group, size = anno_barplot(odds_d1d5$cluster_size), col = list(context = c("gain high" = "#31a354", "gain medium" = "#74c476", "other" = "#cccccc", "lose medium" = "#fb6a4a", "lose high" = "#de2d26")), show_legend = FALSE)
+
+m_d1d5 = Heatmap(odds_d1d5_matrix,
+                 name='Odds Ratio', 
+                 heatmap_legend_param = list(legend_direction = "horizontal", 
+                                             title_gp = gpar(fontsize = 10), 
+                                             legend_width = unit(5, "cm"), at = c(0, 5, 10, 15, 20, 25, 30), 
+                                             labels = c(0, 5, 10, 15, 20, 25, 30), 
+                                             title = "Odds Ratio", 
+                                             legend_height = unit(4, "cm"), 
+                                             title_position = "topleft", border="gray40"), 
+                 column_names_rot = 45, 
+                 column_title = NULL, 
+                 rect_gp = gpar(col = "gray40", lwd = 1), 
+                 col=col_fun2,
+                 right_annotation = row_ha_hmap_d1d5_full,
+                 row_title=NULL, 
+                 row_dend_width = unit(4, "cm"), 
+                 row_names_gp = gpar(fontsize = 8), 
+                 row_gap = unit(2, "mm"), 
+                 column_km=6, 
+                 column_km_repeats = 100,
+                 column_dend_height = unit(2, "cm"),
+                 column_gap = unit(5, "mm"), 
+                 left_annotation = rowAnnotation(foo = anno_block(gp = gpar(fill = c(8,8,8,8)), 
+                                                                  labels = c("g1", "g2", "g3", "g4"),
+                                                                  labels_gp = gpar(col = "black", fontsize = 10))), 
+                 row_km=4, 
+                 row_km_repeats = 100, 
+                 cell_fun = function(j, i, x, y, width, height, fill) {if(odds_d1d5_matrix[i, j] > 5) grid.text(sprintf("%.1f", odds_d1d5_matrix[i, j]), x, y, gp = gpar(fontsize =8, col='black'))})
+
+draw(m_d1d5, heatmap_legend_side = "bottom", annotation_legend_list = lgd_list)
+
+decorate_annotation("size", {grid.text("cluster size", y = unit(1, "npc") + unit(2, "mm"), just = "bottom", gp = gpar(fontsize = 10))})
+
+# https://jokergoo.github.io/2020/05/11/set-cell-width/height-in-the-heatmap/
+
+m = draw(m_d1d5, heatmap_legend_side = "bottom", annotation_legend_list = lgd_list)
+w = ComplexHeatmap:::width(m)
+w = convertX(w, "inch", valueOnly = TRUE)
+h = ComplexHeatmap:::height(m)
+h = convertY(h, "inch", valueOnly = TRUE)
+c(w, h)
+
+#* trimmed----
+odds_d1d5_trimmed <- odds_d1d5 %>%
+  filter_at(vars(LHY:ELF4), any_vars(.>5)) 
+
+odds_d1d5_trimmed_matrix <- odds_d1d5_trimmed %>%
+  dplyr::select(4:11)
+
+odds_d1d5_trimmed_matrix <- as.matrix(odds_d1d5_trimmed_matrix)
+
+rownames(odds_d1d5_trimmed_matrix) <- c(9, 10, 11, 20, 22, 24, 25, 29, 31, 34, 38, 42, 44, 52, 56, 58, 65, 67, 71, 72)
+
+row_ha_hmap_d1d5_trimmed = rowAnnotation(context = odds_d1d5_trimmed$group, size = anno_barplot(odds_d1d5_trimmed$cluster_size), col = list(context = c("gain high" = "#31a354", "gain medium" = "#74c476", "other" = "#cccccc", "lose medium" = "#fb6a4a", "lose high" = "#de2d26")), show_legend = FALSE)
+
+m_d1d5_trimmed = Heatmap(odds_d1d5_trimmed_matrix,
+                         name='Odds Ratio',
+                         heatmap_legend_param = list(legend_direction = "horizontal", 
+                                                     title_gp = gpar(fontsize = 10), 
+                                                     legend_width = unit(5, "cm"), at = c(0, 5, 10, 15, 20, 25, 30, 35), 
+                                                     labels = c(0, 5, 10, 15, 20, 25, 30, 35), 
+                                                     title = "Odds Ratio",
+                                                     legend_height = unit(4, "cm"), 
+                                                     title_position = "topleft", border="gray40"), 
+                         column_names_rot = 45, 
+                         column_title = NULL, 
+                         rect_gp = gpar(col = "gray40", lwd = 1), 
+                         col=col_fun2,
+                         right_annotation = row_ha_hmap_d1d5_trimmed,
+                         row_title=NULL, 
+                         row_dend_width = unit(4, "cm"),
+                         row_names_gp = gpar(fontsize = 10), 
+                         row_gap = unit(2, "mm"), 
+                         column_km=6, 
+                         column_km_repeats = 100,
+                         column_dend_height = unit(2, "cm"),
+                         column_gap = unit(5, "mm"), 
+                         left_annotation = rowAnnotation(foo = anno_block(gp = gpar(fill = c(8,8,8,8)), 
+                                                                          labels = c("g1", "g2", "g3", "g4"),
+                                                                          labels_gp = gpar(col = "black", fontsize = 10))), 
+                         row_km=4, 
+                         row_km_repeats = 100,
+                         cell_fun = function(j, i, x, y, width, height, fill) {if(odds_d1d5_trimmed_matrix[i, j] > 5) grid.text(sprintf("%.1f", odds_d1d5_trimmed_matrix[i, j]), x, y, gp = gpar(fontsize =11, col='black', fontface = 'bold'))})
 
 
+lgd_list=list(Legend(labels=c("Gain High", "Gain Medium", "Other", "Lose Medium", "Lose High"), title="cluster context", type = "points", pch=15, title_gp = gpar(fontsize = 10), size=unit(5,"mm"), border="black", legend_gp=gpar(col=c('#31a354', '#74c476', '#cccccc', '#fb6a4a', '#de2d26'))))
 
+draw(m_d1d5_trimmed, heatmap_legend_side = "bottom", annotation_legend_list = lgd_list)
 
+decorate_annotation("size", {grid.text("cluster size", y = unit(1, "npc") + unit(2, "mm"), just = "bottom", gp = gpar(fontsize = 10))})
+
+# https://jokergoo.github.io/2020/05/11/set-cell-width/height-in-the-heatmap/
+
+m = draw(m_d1d5_trimmed, heatmap_legend_side = "bottom", annotation_legend_list = lgd_list)
+w = ComplexHeatmap:::width(m)
+w = convertX(w, "inch", valueOnly = TRUE)
+h = ComplexHeatmap:::height(m)
+h = convertY(h, "inch", valueOnly = TRUE)
+c(w, h)
