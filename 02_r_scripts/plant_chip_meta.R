@@ -7,6 +7,7 @@ devtools::install_github("vqv/ggbiplot")
 library(ggbiplot)
 library(ggrepel)
 library(circlize)
+library(UpSetR)
 
 library(devtools)
 install_github("jokergoo/ComplexHeatmap")
@@ -1398,3 +1399,121 @@ w = convertX(w, "inch", valueOnly = TRUE)
 h = ComplexHeatmap:::height(m)
 h = convertY(h, "inch", valueOnly = TRUE)
 c(w, h)
+
+# UpSet Plots----
+
+# full----
+
+myGeneSets <- list(TF_network_LHY = TF_adams_merge$gene_ID,
+                   TF_network_CCA1 = TF_kamioka_nagel_merge$gene_ID,
+                   TF_network_TOC1 = TF_huang_merge$gene_ID,
+                   TF_network_PRR5 = TF_nakamichi_merge$gene_ID,
+                   TF_network_PRR7 = TF_liu_merge$gene_ID,
+                   TF_network_LUX = TF_ezer_LUX_merge$gene_ID,
+                   TF_network_ELF3 = TF_ezer_ELF3_merge$gene_ID,
+                   TF_network_ELF4 = TF_ezer_ELF4_merge$gene_ID)
+
+# fromList: a function to convert a list of named vectors to a data frame compatible with UpSetR
+sets <- fromList(myGeneSets)
+
+UpSet<-upset(sets, nsets=8, number.angles = 30, order.by = "freq", matrix.color='grey40', point.size = 2.5, sets.x.label = "Clock ChIP targets", mainbar.y.label = "Gene Set Intersections", sets.bar.color = c("#542788", "#a6d96a", "#4575b4", "#1a9850", "#636363", "#f46d43", "#fdae61", "#cccccc"), text.scale = c(1.3, 1.3, 1, 1, 1, 0.75))
+
+UpSet
+
+png("Upset LHY CCA1 TOC1 LUX.png", width = 6, height = 6, units = 'in', res = 300)
+
+# for all 8 clock
+# png("Upset LHY CCA1 TOC1 LUX PRR5 PRR7 ELF3 ELF4.png", width = 8, height = 6, units = 'in', res = 300)
+
+UpSet
+
+dev.off()
+
+# trimmed----
+
+TF_adams_merge_trimmed <- TF_adams_merge %>% 
+  filter(cluster %in% c(9, 10, 11, 20, 22, 24, 25, 29, 31, 34, 38, 42, 44, 52, 56, 58, 65, 67, 71, 72))
+
+TF_kamioka_nagel_merge_trimmed <- TF_kamioka_nagel_merge %>%
+  filter(cluster %in% c(9, 10, 11, 20, 22, 24, 25, 29, 31, 34, 38, 42, 44, 52, 56, 58, 65, 67, 71, 72))
+
+TF_huang_merge_trimmed <- TF_huang_merge %>%
+  filter(cluster %in% c(9, 10, 11, 20, 22, 24, 25, 29, 31, 34, 38, 42, 44, 52, 56, 58, 65, 67, 71, 72))
+
+TF_nakamichi_merge_trimmed <- TF_nakamichi_merge %>%
+  filter(cluster %in% c(9, 10, 11, 20, 22, 24, 25, 29, 31, 34, 38, 42, 44, 52, 56, 58, 65, 67, 71, 72))
+
+TF_liu_merge_trimmed <- TF_liu_merge %>%
+  filter(cluster %in% c(9, 10, 11, 20, 22, 24, 25, 29, 31, 34, 38, 42, 44, 52, 56, 58, 65, 67, 71, 72))
+
+TF_ezer_LUX_merge_trimmed <- TF_ezer_LUX_merge %>%
+  filter(cluster %in% c(9, 10, 11, 20, 22, 24, 25, 29, 31, 34, 38, 42, 44, 52, 56, 58, 65, 67, 71, 72))
+
+TF_ezer_ELF3_merge_trimmed <- TF_ezer_ELF3_merge %>%
+  filter(cluster %in% c(9, 10, 11, 20, 22, 24, 25, 29, 31, 34, 38, 42, 44, 52, 56, 58, 65, 67, 71, 72))
+
+TF_ezer_ELF4_merge_trimmed <- TF_ezer_ELF4_merge %>%
+  filter(cluster %in% c(9, 10, 11, 20, 22, 24, 25, 29, 31, 34, 38, 42, 44, 52, 56, 58, 65, 67, 71, 72))
+  
+myGeneSets_trimmed <- list(LHY = TF_adams_merge_trimmed$gene_ID,
+                           CCA1 = TF_kamioka_nagel_merge_trimmed$gene_ID,
+                           TOC1 = TF_huang_merge_trimmed$gene_ID,
+                           PRR5 = TF_nakamichi_merge_trimmed$gene_ID,
+                           PRR7 = TF_liu_merge_trimmed$gene_ID,
+                           LUX = TF_ezer_LUX_merge_trimmed$gene_ID,
+                           ELF3 = TF_ezer_ELF3_merge_trimmed$gene_ID,
+                           ELF4 = TF_ezer_ELF4_merge_trimmed$gene_ID) 
+  
+sets_trimmed <- fromList(myGeneSets_trimmed)
+
+UpSet_trimmed<-upset(sets_trimmed, nsets=8, number.angles = 30, order.by = "freq", matrix.color='grey40', point.size = 2.5, sets.x.label = "Clock ChIP targets", mainbar.y.label = "Gene Set Intersections", sets.bar.color = c("#542788", "#a6d96a", "#4575b4", "#1a9850", "#636363", "#f46d43", "#fdae61", "#cccccc"), text.scale = c(1.3, 1.3, 1, 1, 1, 0.9))
+
+png("./03_plots/UpSet_trimmed.png", width = 8, height = 6, units = 'in', res = 300)
+
+UpSet_trimmed
+
+dev.off()
+
+# UpSet column identities----
+
+# col1
+# LHY targets alone i.e. not targets of CCA1, TOC1, LUX, ELF3, PRR7, PRR5 and ELF4
+# firstly an anti_join of CCA1 with LHY
+TF_LHY_TOC1 <- anti_join(TF_adams_merge_trimmed, TF_huang_merge_trimmed, by="gene_ID")
+
+# take this and rule out LUX targets
+TF_LHY_TOC1_notLUX <- anti_join(TF_LHY_TOC1, TF_ezer_LUX_merge_trimmed, by='gene_ID')
+
+# take previous and rule out CCA1 targets
+TF_LHY_TOC1_notLUX_notCCA1 <- anti_join(TF_LHY_TOC1_notLUX, TF_kamioka_nagel_merge_trimmed, by='gene_ID')
+
+# take previous and rule out ELF3 targets
+TF_LHY_TOC1_notLUX_notCCA1_notELF3 <- anti_join(TF_LHY_TOC1_notLUX_notCCA1, TF_ezer_ELF3_merge_trimmed, by='gene_ID')
+
+# take previous and rule out PRR5 targets
+TF_LHY_TOC1_notLUX_notCCA1_notELF3_notPRR5 <- anti_join(TF_LHY_TOC1_notLUX_notCCA1_notELF3, TF_nakamichi_merge_trimmed, by='gene_ID')
+
+# take previous and rule out PRR7 targets
+TF_LHY_TOC1_notLUX_notCCA1_notELF3_notPRR5_notPRR7 <- anti_join(TF_LHY_TOC1_notLUX_notCCA1_notELF3_notPRR5, TF_liu_merge_trimmed, by='gene_ID')
+
+# take previous and rule out ELF4 targets
+TF_LHY_TOC1_notLUX_notCCA1_notELF3_notPRR5_notPRR7_notELF4 <- anti_join(TF_LHY_TOC1_notLUX_notCCA1_notELF3_notPRR5_notPRR7, TF_ezer_ELF4_merge_trimmed, by='gene_ID')
+
+# tidy up dataset
+# select first two columns
+# Column 1 of UpSetR_trimmed plot for 8 clock components
+UpSet_trimmed_col1 <- TF_LHY_TOC1_notLUX_notCCA1_notELF3_notPRR5_notPRR7_notELF4[,1:2]
+
+# add a column describing clock TFs targeting gene_IDs
+UpSet_trimmed_col1$clock <- "LHY"
+
+UpSet_trimmed_col1 <- UpSet_trimmed_col1 %>% 
+  left_join(LHY_bind_d1d2, by = c('gene_ID', 'cluster')) %>% 
+  dplyr::select(-4) %>% 
+  dplyr::rename(type_d1d2 = type)
+
+UpSet_trimmed_col1 <- UpSet_trimmed_col1 %>% 
+  left_join(LHY_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
+  dplyr::select(-5) %>% 
+  dplyr::rename(type_d1d5 = type)
+
