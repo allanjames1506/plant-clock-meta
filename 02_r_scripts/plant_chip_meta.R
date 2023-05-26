@@ -1476,7 +1476,7 @@ dev.off()
 
 # UpSet column identities----
 
-# col1
+# col1----
 # LHY targets alone i.e. not targets of CCA1, TOC1, LUX, ELF3, PRR7, PRR5 and ELF4
 # firstly an anti_join of CCA1 with LHY
 TF_LHY_TOC1 <- anti_join(TF_adams_merge_trimmed, TF_huang_merge_trimmed, by="gene_ID")
@@ -1516,4 +1516,372 @@ UpSet_trimmed_col1 <- UpSet_trimmed_col1 %>%
   left_join(LHY_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
+
+# col2----
+# TOC1 targets alone i.e. not targets of CCA1, LHY, LUX, ELF3, PRR7, PRR5 and ELF4
+# firstly an anti_join of CCA1 with LHY
+TF_TOC1_LHY <- anti_join(TF_huang_merge_trimmed, TF_adams_merge_trimmed, by="gene_ID")
+
+# take this and rule out LUX targets
+TF_TOC1_LHY_notLUX <- anti_join(TF_TOC1_LHY, TF_ezer_LUX_merge_trimmed, by='gene_ID')
+
+# take previous and rule out CCA1 targets
+TF_TOC1_LHY_notLUX_notCCA1 <- anti_join(TF_TOC1_LHY_notLUX, TF_kamioka_nagel_merge_trimmed, by='gene_ID')
+
+# take previous and rule out ELF3 targets
+TF_TOC1_LHY_notLUX_notCCA1_notELF3 <- anti_join(TF_TOC1_LHY_notLUX_notCCA1, TF_ezer_ELF3_merge_trimmed, by='gene_ID')
+
+# take previous and rule out PRR5 targets
+TF_TOC1_LHY_notLUX_notCCA1_notELF3_notPRR5 <- anti_join(TF_TOC1_LHY_notLUX_notCCA1_notELF3, TF_nakamichi_merge_trimmed, by='gene_ID')
+
+# take previous and rule out PRR7 targets
+TF_TOC1_LHY_notLUX_notCCA1_notELF3_notPRR5_notPRR7 <- anti_join(TF_TOC1_LHY_notLUX_notCCA1_notELF3_notPRR5, TF_liu_merge_trimmed, by='gene_ID')
+
+# take previous and rule out ELF4 targets
+TF_TOC1_LHY_notLUX_notCCA1_notELF3_notPRR5_notPRR7_notELF4 <- anti_join(TF_TOC1_LHY_notLUX_notCCA1_notELF3_notPRR5_notPRR7, TF_ezer_ELF4_merge_trimmed, by='gene_ID')
+
+# tidy up dataset
+# select first two columns
+# Column 2 of UpSetR_trimmed plot for 8 clock components
+UpSet_trimmed_col2 <- TF_TOC1_LHY_notLUX_notCCA1_notELF3_notPRR5_notPRR7_notELF4[,1:2]
+
+# add a column describing clock TFs targeting gene_IDs
+UpSet_trimmed_col2$clock <- "TOC1"
+
+UpSet_trimmed_col2 <- UpSet_trimmed_col2 %>% 
+  left_join(TOC1_bind_d1d2, by = c('gene_ID', 'cluster')) %>% 
+  dplyr::select(-4) %>% 
+  dplyr::rename(type_d1d2 = type)
+
+UpSet_trimmed_col2 <- UpSet_trimmed_col2 %>% 
+  left_join(TOC1_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
+  dplyr::select(-5) %>% 
+  dplyr::rename(type_d1d5 = type)
+
+# col3----
+# LUX targets alone i.e. not targets of CCA1, LHY, TOC1, ELF3, PRR7, PRR5 and ELF4
+# firstly an anti_join of CCA1 with LHY
+TF_LUX_LHY <- anti_join(TF_ezer_LUX_merge_trimmed, TF_adams_merge_trimmed, by="gene_ID")
+
+# take this and rule out TOC1 targets
+TF_LUX_LHY_notTOC1 <- anti_join(TF_LUX_LHY, TF_huang_merge_trimmed, by='gene_ID')
+
+# take previous and rule out CCA1 targets
+TF_LUX_LHY_notTOC1_notCCA1 <- anti_join(TF_LUX_LHY_notTOC1, TF_kamioka_nagel_merge_trimmed, by='gene_ID')
+
+# take previous and rule out ELF3 targets
+TF_LUX_LHY_notTOC1_notCCA1_notELF3 <- anti_join(TF_LUX_LHY_notTOC1_notCCA1, TF_ezer_ELF3_merge_trimmed, by='gene_ID')
+
+# take previous and rule out PRR5 targets
+TF_LUX_LHY_notTOC1_notCCA1_notELF3_notPRR5 <- anti_join(TF_LUX_LHY_notTOC1_notCCA1_notELF3, TF_nakamichi_merge_trimmed, by='gene_ID')
+
+# take previous and rule out PRR7 targets
+TF_LUX_LHY_notTOC1_notCCA1_notELF3_notPRR5_notPRR7 <- anti_join(TF_LUX_LHY_notTOC1_notCCA1_notELF3_notPRR5, TF_liu_merge_trimmed, by='gene_ID')
+
+# take previous and rule out ELF4 targets
+TF_LUX_LHY_notTOC1_notCCA1_notELF3_notPRR5_notPRR7_notELF4 <- anti_join(TF_LUX_LHY_notTOC1_notCCA1_notELF3_notPRR5_notPRR7, TF_ezer_ELF4_merge_trimmed, by='gene_ID')
+
+# tidy up dataset
+# select first two columns
+# Column 3 of UpSetR_trimmed plot for 8 clock components
+UpSet_trimmed_col3 <- TF_LUX_LHY_notTOC1_notCCA1_notELF3_notPRR5_notPRR7_notELF4[,1:2]
+
+# add a column describing clock TFs targeting gene_IDs
+UpSet_trimmed_col3$clock <- "LUX"
+
+UpSet_trimmed_col3 <- UpSet_trimmed_col3 %>% 
+  left_join(LUX_bind_d1d2, by = c('gene_ID', 'cluster')) %>% 
+  dplyr::select(-4) %>% 
+  dplyr::rename(type_d1d2 = type)
+
+UpSet_trimmed_col3 <- UpSet_trimmed_col3 %>% 
+  left_join(LUX_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
+  dplyr::select(-5) %>% 
+  dplyr::rename(type_d1d5 = type)
+
+# col4----
+# CCA1 and LHY common targets - not targets of LUX, TOC1, ELF3, PRR7, PRR5 and ELF4
+# firstly an inner_join of CCA1 with LHY
+TF_common_LHY_CCA1 <- inner_join(TF_adams_merge_trimmed[,1:2], TF_kamioka_nagel_merge_trimmed[,2], by="gene_ID")
+
+# take this and rule out TOC1 targets
+TF_common_LHY_CCA1_notTOC1 <- anti_join(TF_common_LHY_CCA1, TF_huang_merge_trimmed, by='gene_ID')
+
+# take previous and rule out LUX targets
+TF_common_LHY_CCA1_notTOC1_notLUX <- anti_join(TF_common_LHY_CCA1_notTOC1, TF_ezer_LUX_merge_trimmed, by='gene_ID')
+
+# take previous and rule out ELF3 targets
+TF_common_LHY_CCA1_notTOC1_notLUX_notELF3 <- anti_join(TF_common_LHY_CCA1_notTOC1_notLUX, TF_ezer_ELF3_merge_trimmed, by='gene_ID')
+
+# take previous and rule out PRR5 targets
+TF_common_LHY_CCA1_notTOC1_notLUX_notELF3_notPRR5 <- anti_join(TF_common_LHY_CCA1_notTOC1_notLUX_notELF3, TF_nakamichi_merge_trimmed, by='gene_ID')
+
+# take previous and rule out PRR7 targets
+TF_common_LHY_CCA1_notTOC1_notLUX_notELF3_notPRR5_notPRR7 <- anti_join(TF_common_LHY_CCA1_notTOC1_notLUX_notELF3_notPRR5, TF_liu_merge_trimmed, by='gene_ID')
+
+# take previous and rule out ELF4 targets
+TF_common_LHY_CCA1_notTOC1_notLUX_notELF3_notPRR5_notPRR7_notELF4 <- anti_join(TF_common_LHY_CCA1_notTOC1_notLUX_notELF3_notPRR5_notPRR7, TF_ezer_ELF4_merge_trimmed, by='gene_ID')
+
+# tidy up dataset
+# select first two columns
+# Column 4 of UpSetR_trimmed plot for 8 clock components
+UpSet_trimmed_col4 <- TF_common_LHY_CCA1_notTOC1_notLUX_notELF3_notPRR5_notPRR7_notELF4[,1:2]
+
+# add a column describing clock TFs targeting gene_IDs
+UpSet_trimmed_col4$clock <- "LHY and CCA1"
+
+UpSet_trimmed_col4 <- UpSet_trimmed_col4 %>% 
+  left_join(LHY_bind_d1d2, by = c('gene_ID', 'cluster')) %>% 
+  dplyr::select(-4) %>% 
+  dplyr::rename(type_d1d2 = type)
+
+UpSet_trimmed_col4 <- UpSet_trimmed_col4 %>% 
+  left_join(LHY_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
+  dplyr::select(-5) %>% 
+  dplyr::rename(type_d1d5 = type)
+
+# col5----
+# LUX and ELF3 common targets - not targets of LHY, CCA1, TOC1, PRR7, PRR5 and ELF4
+# firstly an inner_join of LUX with ELF3
+TF_common_LUX_ELF3 <- inner_join(TF_ezer_LUX_merge_trimmed[,1:2], TF_ezer_ELF3_merge_trimmed[,2], by="gene_ID")
+
+# take this and rule out LHY targets
+TF_common_LUX_ELF3_notLHY <- anti_join(TF_common_LUX_ELF3, TF_adams_merge_trimmed, by='gene_ID')
+
+# take previous and rule out CCA1 targets
+TF_common_LUX_ELF3_notLHY_notCCA1 <- anti_join(TF_common_LUX_ELF3_notLHY, TF_kamioka_nagel_merge_trimmed, by='gene_ID')
+
+# take previous and rule out TOC1 targets
+TF_common_LUX_ELF3_notLHY_notCCA1_notTOC1 <- anti_join(TF_common_LUX_ELF3_notLHY_notCCA1, TF_huang_merge_trimmed, by='gene_ID')
+
+# take previous and rule out PRR5 targets
+TF_common_LUX_ELF3_notLHY_notCCA1_notTOC1_notPRR5 <- anti_join(TF_common_LUX_ELF3_notLHY_notCCA1_notTOC1, TF_nakamichi_merge_trimmed, by='gene_ID')
+
+# take previous and rule out PRR7 targets
+TF_common_LUX_ELF3_notLHY_notCCA1_notTOC1_notPRR5_notPRR7 <- anti_join(TF_common_LUX_ELF3_notLHY_notCCA1_notTOC1_notPRR5, TF_liu_merge_trimmed, by='gene_ID')
+
+# take previous and rule out ELF4 targets
+TF_common_LUX_ELF3_notLHY_notCCA1_notTOC1_notPRR5_notPRR7_notELF4 <- anti_join(TF_common_LUX_ELF3_notLHY_notCCA1_notTOC1_notPRR5_notPRR7, TF_ezer_ELF4_merge_trimmed, by='gene_ID')
+
+# tidy up dataset
+# select first two columns
+# Column 5 of UpSetR_trimmed plot for 8 clock components
+UpSet_trimmed_col5 <- TF_common_LUX_ELF3_notLHY_notCCA1_notTOC1_notPRR5_notPRR7_notELF4[,1:2]
+
+# add a column describing clock TFs targeting gene_IDs
+UpSet_trimmed_col5$clock <- "LUX and ELF3"
+
+UpSet_trimmed_col5 <- UpSet_trimmed_col5 %>% 
+  left_join(LUX_bind_d1d2, by = c('gene_ID', 'cluster')) %>% 
+  dplyr::select(-4) %>% 
+  dplyr::rename(type_d1d2 = type)
+
+UpSet_trimmed_col5 <- UpSet_trimmed_col5 %>% 
+  left_join(LUX_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
+  dplyr::select(-5) %>% 
+  dplyr::rename(type_d1d5 = type)
+
+# col6----
+# PRR5 targets alone - not targets of LUX, LHY, TOC1, CCA1, ELF3, PRR7 and ELF4
+# firstly an anti_join of PRR5 with LUX
+TF_PRR5_LUX <- anti_join(TF_nakamichi_merge_trimmed, TF_ezer_LUX_merge_trimmed, by="gene_ID")
+
+# take this and rule out LHY targets
+TF_PRR5_LUX_notLHY <- anti_join(TF_PRR5_LUX, TF_adams_merge_trimmed, by='gene_ID')
+
+# take previous and rule out TOC1 targets
+TF_PRR5_LUX_notLHY_notTOC1 <- anti_join(TF_PRR5_LUX_notLHY, TF_huang_merge_trimmed, by='gene_ID')
+
+# take previous and rule out CCA1 targets
+TF_PRR5_LUX_notLHY_notTOC1_notCCA1 <- anti_join(TF_PRR5_LUX_notLHY_notTOC1, TF_kamioka_nagel_merge_trimmed, by='gene_ID')
+
+# take previous and rule out ELF3 targets
+TF_PRR5_LUX_notLHY_notTOC1_notCCA1_notELF3 <- anti_join(TF_PRR5_LUX_notLHY_notTOC1_notCCA1, TF_ezer_ELF3_merge_trimmed, by='gene_ID')
+
+# take previous and rule out PRR7 targets
+TF_PRR5_LUX_notLHY_notTOC1_notCCA1_notELF3_notPRR7 <- anti_join(TF_PRR5_LUX_notLHY_notTOC1_notCCA1_notELF3, TF_liu_merge_trimmed, by='gene_ID')
+
+# take previous and rule out ELF4 targets
+TF_PRR5_LUX_notLHY_notTOC1_notCCA1_notELF3_notPRR7_notELF4 <- anti_join(TF_PRR5_LUX_notLHY_notTOC1_notCCA1_notELF3_notPRR7, TF_ezer_ELF4_merge_trimmed, by='gene_ID')
+
+# tidy up dataset
+# select first two columns
+# Column 6 of UpSetR_trimmed plot for 8 clock components
+UpSet_trimmed_col6 <- TF_PRR5_LUX_notLHY_notTOC1_notCCA1_notELF3_notPRR7_notELF4[,1:2]
+
+# add a column describing clock TFs targeting gene_IDs
+UpSet_trimmed_col6$clock <- "PRR5"
+
+UpSet_trimmed_col6 <- UpSet_trimmed_col6 %>% 
+  left_join(PRR5_bind_d1d2, by = c('gene_ID', 'cluster')) %>% 
+  dplyr::select(-4) %>% 
+  dplyr::rename(type_d1d2 = type)
+
+UpSet_trimmed_col6 <- UpSet_trimmed_col6 %>% 
+  left_join(PRR5_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
+  dplyr::select(-5) %>% 
+  dplyr::rename(type_d1d5 = type)
+
+# col7----
+# PRR7 targets alone - not targets of LUX, LHY, TOC1, CCA1, ELF3, PRR5 and ELF4
+# firstly an anti_join of PRR7 with LUX
+TF_PRR7_LUX <- anti_join(TF_liu_merge_trimmed, TF_ezer_LUX_merge_trimmed, by="gene_ID")
+
+# take this and rule out LHY targets
+TF_PRR7_LUX_notLHY <- anti_join(TF_PRR7_LUX, TF_adams_merge_trimmed, by='gene_ID')
+
+# take previous and rule out TOC1 targets
+TF_PRR7_LUX_notLHY_notTOC1 <- anti_join(TF_PRR7_LUX_notLHY, TF_huang_merge_trimmed, by='gene_ID')
+
+# take previous and rule out CCA1 targets
+TF_PRR7_LUX_notLHY_notTOC1_notCCA1 <- anti_join(TF_PRR7_LUX_notLHY_notTOC1, TF_kamioka_nagel_merge_trimmed, by='gene_ID')
+
+# take previous and rule out ELF3 targets
+TF_PRR7_LUX_notLHY_notTOC1_notCCA1_notELF3 <- anti_join(TF_PRR7_LUX_notLHY_notTOC1_notCCA1, TF_ezer_ELF3_merge_trimmed, by='gene_ID')
+
+# take previous and rule out PRR5 targets
+TF_PRR7_LUX_notLHY_notTOC1_notCCA1_notELF3_notPRR5 <- anti_join(TF_PRR7_LUX_notLHY_notTOC1_notCCA1_notELF3, TF_nakamichi_merge_trimmed, by='gene_ID')
+
+# take previous and rule out ELF4 targets
+TF_PRR7_LUX_notLHY_notTOC1_notCCA1_notELF3_notPRR5_notELF4 <- anti_join(TF_PRR7_LUX_notLHY_notTOC1_notCCA1_notELF3_notPRR5, TF_ezer_ELF4_merge_trimmed, by='gene_ID')
+
+# tidy up dataset
+# select first two columns
+# Column 7 of UpSetR_trimmed plot for 8 clock components
+UpSet_trimmed_col7 <- TF_PRR7_LUX_notLHY_notTOC1_notCCA1_notELF3_notPRR5_notELF4[,1:2]
+
+# add a column describing clock TFs targeting gene_IDs
+UpSet_trimmed_col7$clock <- "PRR7"
+
+UpSet_trimmed_col7 <- UpSet_trimmed_col7 %>% 
+  left_join(PRR7_bind_d1d2, by = c('gene_ID', 'cluster')) %>% 
+  dplyr::select(-4) %>% 
+  dplyr::rename(type_d1d2 = type)
+
+UpSet_trimmed_col7 <- UpSet_trimmed_col7 %>% 
+  left_join(PRR7_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
+  dplyr::select(-5) %>% 
+  dplyr::rename(type_d1d5 = type)
+
+# col8----
+# LUX and LHY common targets - not targets of TOC1, CCA1, ELF3, PRR7, PRR5 and ELF4
+# firstly an inner_join of PRR7 with LUX
+TF_common_LUX_LHY <- inner_join(TF_ezer_LUX_merge_trimmed[,1:2], TF_adams_merge_trimmed[,2], by="gene_ID")
+
+# take this and rule out TOC1 targets
+TF_common_LUX_LHY_notTOC1 <- anti_join(TF_common_LUX_LHY, TF_huang_merge_trimmed, by='gene_ID')
+
+# take previous and rule out CCA1 targets
+TF_common_LUX_LHY_notTOC1_notCCA1 <- anti_join(TF_common_LUX_LHY_notTOC1, TF_kamioka_nagel_merge_trimmed, by='gene_ID')
+
+# take previous and rule out ELF3 targets
+TF_common_LUX_LHY_notTOC1_notCCA1_notELF3 <- anti_join(TF_common_LUX_LHY_notTOC1_notCCA1, TF_ezer_ELF3_merge_trimmed, by='gene_ID')
+
+# take previous and rule out PRR7 targets
+TF_common_LUX_LHY_notTOC1_notCCA1_notELF3_notPRR7 <- anti_join(TF_common_LUX_LHY_notTOC1_notCCA1_notELF3, TF_liu_merge_trimmed, by='gene_ID')
+
+# take previous and rule out PRR5 targets
+TF_common_LUX_LHY_notTOC1_notCCA1_notELF3_notPRR7_notPRR5 <- anti_join(TF_common_LUX_LHY_notTOC1_notCCA1_notELF3_notPRR7, TF_nakamichi_merge_trimmed, by='gene_ID')
+
+# take previous and rule out ELF4 targets
+TF_common_LUX_LHY_notTOC1_notCCA1_notELF3_notPRR7_notPRR5_notELF4 <- anti_join(TF_common_LUX_LHY_notTOC1_notCCA1_notELF3_notPRR7_notPRR5, TF_ezer_ELF4_merge_trimmed, by='gene_ID')
+
+# tidy up dataset
+# select first two columns
+# Column 8 of UpSetR_trimmed plot for 8 clock components
+UpSet_trimmed_col8 <- TF_common_LUX_LHY_notTOC1_notCCA1_notELF3_notPRR7_notPRR5_notELF4[,1:2]
+
+# add a column describing clock TFs targeting gene_IDs
+UpSet_trimmed_col8$clock <- "LUX and LHY"
+
+UpSet_trimmed_col8 <- UpSet_trimmed_col8 %>% 
+  left_join(LUX_bind_d1d2, by = c('gene_ID', 'cluster')) %>% 
+  dplyr::select(-4) %>% 
+  dplyr::rename(type_d1d2 = type)
+
+UpSet_trimmed_col8 <- UpSet_trimmed_col8 %>% 
+  left_join(LUX_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
+  dplyr::select(-5) %>% 
+  dplyr::rename(type_d1d5 = type)
+
+# col9----
+# LUX and LHY and CCA1 common targets - not targets of TOC1, ELF3, PRR7, PRR5 and ELF4
+# firstly take TF_common_LUX_LHY and then inner_join with CCA1
+TF_common_LUX_LHY_CCA1 <- inner_join(TF_common_LUX_LHY[,1:2], TF_kamioka_nagel_merge_trimmed[,2], by="gene_ID")
+
+# take this and rule out TOC1 targets
+TF_common_LUX_LHY_CCA1_notTOC1 <- anti_join(TF_common_LUX_LHY_CCA1, TF_huang_merge_trimmed, by='gene_ID')
+
+# take previous and rule out ELF3 targets
+TF_common_LUX_LHY_CCA1_notTOC1_notELF3 <- anti_join(TF_common_LUX_LHY_CCA1_notTOC1, TF_ezer_ELF3_merge_trimmed, by='gene_ID')
+
+# take previous and rule out PRR7 targets
+TF_common_LUX_LHY_CCA1_notTOC1_notELF3_notPRR7 <- anti_join(TF_common_LUX_LHY_CCA1_notTOC1_notELF3, TF_liu_merge_trimmed, by='gene_ID')
+
+# take previous and rule out PRR5 targets
+TF_common_LUX_LHY_CCA1_notTOC1_notELF3_notPRR7_notPRR5 <- anti_join(TF_common_LUX_LHY_CCA1_notTOC1_notELF3_notPRR7, TF_nakamichi_merge_trimmed, by='gene_ID')
+
+# take previous and rule out ELF4 targets
+TF_common_LUX_LHY_CCA1_notTOC1_notELF3_notPRR7_notPRR5_notELF4 <- anti_join(TF_common_LUX_LHY_CCA1_notTOC1_notELF3_notPRR7_notPRR5, TF_ezer_ELF4_merge_trimmed, by='gene_ID')
+
+# tidy up dataset
+# select first two columns
+# Column 9 of UpSetR_trimmed plot for 8 clock components
+UpSet_trimmed_col9 <- TF_common_LUX_LHY_CCA1_notTOC1_notELF3_notPRR7_notPRR5_notELF4[,1:2]
+
+# add a column describing clock TFs targeting gene_IDs
+UpSet_trimmed_col9$clock <- "LUX and LHY and CCA1"
+
+UpSet_trimmed_col9 <- UpSet_trimmed_col9 %>% 
+  left_join(LUX_bind_d1d2, by = c('gene_ID', 'cluster')) %>% 
+  dplyr::select(-4) %>% 
+  dplyr::rename(type_d1d2 = type)
+
+UpSet_trimmed_col9 <- UpSet_trimmed_col9 %>% 
+  left_join(LUX_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
+  dplyr::select(-5) %>% 
+  dplyr::rename(type_d1d5 = type)
+
+# col10----
+# LUX and TOC1 common targets - not targets of LHY, CCA1, ELF3, PRR7, PRR5 and ELF4
+# firstly take an inner_join of LUX with TOC1
+TF_common_LUX_TOC1 <- inner_join(TF_ezer_LUX_merge_trimmed[,1:2], TF_huang_merge_trimmed[,2], by="gene_ID")
+
+# take this and rule out LHY targets
+TF_common_LUX_TOC1_notLHY <- anti_join(TF_common_LUX_TOC1, TF_adams_merge_trimmed, by='gene_ID')
+
+# take previous and rule out CCA1 targets
+TF_common_LUX_TOC1_notLHY_notCCA1 <- anti_join(TF_common_LUX_TOC1_notLHY, TF_kamioka_nagel_merge_trimmed, by='gene_ID')
+
+# take previous and rule out ELF3 targets
+TF_common_LUX_TOC1_notLHY_notCCA1_notELF3 <- anti_join(TF_common_LUX_TOC1_notLHY_notCCA1, TF_ezer_ELF3_merge_trimmed, by='gene_ID')
+
+# take previous and rule out PRR7 targets
+TF_common_LUX_TOC1_notLHY_notCCA1_notELF3_notPRR7 <- anti_join(TF_common_LUX_TOC1_notLHY_notCCA1_notELF3, TF_liu_merge_trimmed, by='gene_ID')
+
+# take previous and rule out PRR5 targets
+TF_common_LUX_TOC1_notLHY_notCCA1_notELF3_notPRR7_notPRR5 <- anti_join(TF_common_LUX_TOC1_notLHY_notCCA1_notELF3_notPRR7, TF_nakamichi_merge_trimmed, by='gene_ID')
+
+# take previous and rule out ELF4 targets
+TF_common_LUX_TOC1_notLHY_notCCA1_notELF3_notPRR7_notPRR5_notELF4 <- anti_join(TF_common_LUX_TOC1_notLHY_notCCA1_notELF3_notPRR7_notPRR5, TF_ezer_ELF4_merge_trimmed, by='gene_ID')
+
+# tidy up dataset
+# select first two columns
+# Column 10 of UpSetR_trimmed plot for 8 clock components
+UpSet_trimmed_col10 <- TF_common_LUX_TOC1_notLHY_notCCA1_notELF3_notPRR7_notPRR5_notELF4[,1:2]
+
+# add a column describing clock TFs targeting gene_IDs
+UpSet_trimmed_col10$clock <- "LUX and TOC1"
+
+UpSet_trimmed_col10 <- UpSet_trimmed_col10 %>% 
+  left_join(LUX_bind_d1d2, by = c('gene_ID', 'cluster')) %>% 
+  dplyr::select(-4) %>% 
+  dplyr::rename(type_d1d2 = type)
+
+UpSet_trimmed_col10 <- UpSet_trimmed_col10 %>% 
+  left_join(LUX_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
+  dplyr::select(-5) %>% 
+  dplyr::rename(type_d1d5 = type)
+
+
 
