@@ -1517,6 +1517,18 @@ UpSet_trimmed_col1 <- UpSet_trimmed_col1 %>%
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
 
+col1_summary_d1d2 <- UpSet_trimmed_col1 %>% 
+  group_by(type_d1d2) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'LHY') %>% 
+  mutate(column = 1)
+
+col1_summary_d1d5 <- UpSet_trimmed_col1 %>% 
+  group_by(type_d1d5) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'LHY') %>% 
+  mutate(column = 1)
+
 # col2----
 # TOC1 targets alone i.e. not targets of CCA1, LHY, LUX, ELF3, PRR7, PRR5 and ELF4
 # firstly an anti_join of CCA1 with LHY
@@ -1557,6 +1569,18 @@ UpSet_trimmed_col2 <- UpSet_trimmed_col2 %>%
   left_join(TOC1_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
+
+col2_summary_d1d2 <- UpSet_trimmed_col2 %>% 
+  group_by(type_d1d2) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'TOC1') %>% 
+  mutate(column = 2)
+
+col2_summary_d1d5 <- UpSet_trimmed_col2 %>% 
+  group_by(type_d1d5) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'TOC1') %>% 
+  mutate(column = 2)
 
 # col3----
 # LUX targets alone i.e. not targets of CCA1, LHY, TOC1, ELF3, PRR7, PRR5 and ELF4
@@ -1599,6 +1623,18 @@ UpSet_trimmed_col3 <- UpSet_trimmed_col3 %>%
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
 
+col3_summary_d1d2 <- UpSet_trimmed_col3 %>% 
+  group_by(type_d1d2) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'LUX') %>% 
+  mutate(column = 3)
+
+col3_summary_d1d5 <- UpSet_trimmed_col3 %>% 
+  group_by(type_d1d5) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'LUX') %>% 
+  mutate(column = 3)
+
 # col4----
 # CCA1 and LHY common targets - not targets of LUX, TOC1, ELF3, PRR7, PRR5 and ELF4
 # firstly an inner_join of CCA1 with LHY
@@ -1639,6 +1675,18 @@ UpSet_trimmed_col4 <- UpSet_trimmed_col4 %>%
   left_join(LHY_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
+
+col4_summary_d1d2 <- UpSet_trimmed_col4 %>% 
+  group_by(type_d1d2) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'LHY and CCA1') %>% 
+  mutate(column = 4)
+
+col4_summary_d1d5 <- UpSet_trimmed_col4 %>% 
+  group_by(type_d1d5) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'LHY and CCA1') %>% 
+  mutate(column = 4)
 
 # col5----
 # LUX and ELF3 common targets - not targets of LHY, CCA1, TOC1, PRR7, PRR5 and ELF4
@@ -1681,6 +1729,18 @@ UpSet_trimmed_col5 <- UpSet_trimmed_col5 %>%
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
 
+col5_summary_d1d2 <- UpSet_trimmed_col5 %>% 
+  group_by(type_d1d2) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'LUX and ELF3') %>% 
+  mutate(column = 5)
+
+col5_summary_d1d5 <- UpSet_trimmed_col5 %>% 
+  group_by(type_d1d5) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'LUX and ELF3') %>% 
+  mutate(column = 5)
+
 # col6----
 # PRR5 targets alone - not targets of LUX, LHY, TOC1, CCA1, ELF3, PRR7 and ELF4
 # firstly an anti_join of PRR5 with LUX
@@ -1721,6 +1781,18 @@ UpSet_trimmed_col6 <- UpSet_trimmed_col6 %>%
   left_join(PRR5_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
+
+col6_summary_d1d2 <- UpSet_trimmed_col6 %>% 
+  group_by(type_d1d2) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'PRR5') %>% 
+  mutate(column = 6)
+
+col6_summary_d1d5 <- UpSet_trimmed_col6 %>% 
+  group_by(type_d1d5) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'PRR5') %>% 
+  mutate(column = 6)
 
 # col7----
 # PRR7 targets alone - not targets of LUX, LHY, TOC1, CCA1, ELF3, PRR5 and ELF4
@@ -1763,6 +1835,18 @@ UpSet_trimmed_col7 <- UpSet_trimmed_col7 %>%
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
 
+col7_summary_d1d2 <- UpSet_trimmed_col7 %>% 
+  group_by(type_d1d2) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'PRR7') %>% 
+  mutate(column = 7)
+
+col7_summary_d1d5 <- UpSet_trimmed_col7 %>% 
+  group_by(type_d1d5) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'PRR7') %>% 
+  mutate(column = 7)
+
 # col8----
 # LUX and LHY common targets - not targets of TOC1, CCA1, ELF3, PRR7, PRR5 and ELF4
 # firstly an inner_join of PRR7 with LUX
@@ -1804,6 +1888,18 @@ UpSet_trimmed_col8 <- UpSet_trimmed_col8 %>%
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
 
+col8_summary_d1d2 <- UpSet_trimmed_col8 %>% 
+  group_by(type_d1d2) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'LUX and LHY') %>% 
+  mutate(column = 8)
+
+col8_summary_d1d5 <- UpSet_trimmed_col8 %>% 
+  group_by(type_d1d5) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'LUX and LHY') %>% 
+  mutate(column = 8)
+
 # col9----
 # LUX and LHY and CCA1 common targets - not targets of TOC1, ELF3, PRR7, PRR5 and ELF4
 # firstly take TF_common_LUX_LHY and then inner_join with CCA1
@@ -1841,6 +1937,18 @@ UpSet_trimmed_col9 <- UpSet_trimmed_col9 %>%
   left_join(LUX_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
+
+col9_summary_d1d2 <- UpSet_trimmed_col9 %>% 
+  group_by(type_d1d2) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'LUX and LHY and CCA1') %>% 
+  mutate(column = 9) 
+
+col9_summary_d1d5 <- UpSet_trimmed_col9 %>% 
+  group_by(type_d1d5) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'LUX and LHY and CCA1') %>% 
+  mutate(column = 9)
 
 # col10----
 # LUX and TOC1 common targets - not targets of LHY, CCA1, ELF3, PRR7, PRR5 and ELF4
@@ -1883,6 +1991,18 @@ UpSet_trimmed_col10 <- UpSet_trimmed_col10 %>%
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
 
+col10_summary_d1d2 <- UpSet_trimmed_col10 %>% 
+  group_by(type_d1d2) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'LUX and TOC1') %>% 
+  mutate(column = 10)
+
+col10_summary_d1d5 <- UpSet_trimmed_col10 %>% 
+  group_by(type_d1d5) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'LUX and TOC1') %>% 
+  mutate(column = 10)
+
 # col11----
 # CCA1 targets alone - not targets of LUX, LHY, TOC1, ELF3, PRR7, PRR5 and ELF4
 # firstly take an anti_join of CCA1 with LUX
@@ -1924,6 +2044,18 @@ UpSet_trimmed_col11 <- UpSet_trimmed_col11 %>%
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
 
+col11_summary_d1d2 <- UpSet_trimmed_col11 %>% 
+  group_by(type_d1d2) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'CCA1') %>% 
+  mutate(column = 11)
+
+col11_summary_d1d5 <- UpSet_trimmed_col11 %>% 
+  group_by(type_d1d5) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'CCA1') %>% 
+  mutate(column = 11)
+
 # col12----
 # LUX and ELF3 and ELF4 common targets - not targets of LHY, TOC1, CCA1, PRR7, and PRR5 
 # firstly take TF_common_LUX_ELF3 and do an inner_join with ELF4
@@ -1944,7 +2076,6 @@ TF_common_LUX_ELF3_ELF4_notLHY_notTOC1_notCCA1_notPRR7 <- anti_join(TF_common_LU
 # take previous and rule out PRR5 targets
 TF_common_LUX_ELF3_ELF4_notLHY_notTOC1_notCCA1_notPRR7_notPRR5 <- anti_join(TF_common_LUX_ELF3_ELF4_notLHY_notTOC1_notCCA1_notPRR7, TF_nakamichi_merge_trimmed, by='gene_ID')
 
-
 # tidy up dataset
 # select first two columns
 # Column 12 of UpSetR_trimmed plot for 8 clock components
@@ -1962,6 +2093,18 @@ UpSet_trimmed_col12 <- UpSet_trimmed_col12 %>%
   left_join(LUX_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
+
+col12_summary_d1d2 <- UpSet_trimmed_col12 %>% 
+  group_by(type_d1d2) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'LUX and ELF3 and ELF4') %>% 
+  mutate(column = 12)
+
+col12_summary_d1d5 <- UpSet_trimmed_col12 %>% 
+  group_by(type_d1d5) %>%
+  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+  mutate(clock = 'LUX and ELF3 and ELF4') %>% 
+  mutate(column = 12)
 
 # col13----
 # LHY and TOC1 common targets - not targets of LUX, CCA1, ELF3, PRR7, PRR5 and ELF4 
