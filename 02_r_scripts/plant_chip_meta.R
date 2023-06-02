@@ -1517,18 +1517,6 @@ UpSet_trimmed_col1 <- UpSet_trimmed_col1 %>%
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
 
-col1_summary_d1d2 <- UpSet_trimmed_col1 %>% 
-  group_by(type_d1d2) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'LHY') %>% 
-  mutate(column = 1)
-
-col1_summary_d1d5 <- UpSet_trimmed_col1 %>% 
-  group_by(type_d1d5) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'LHY') %>% 
-  mutate(column = 1)
-
 # col2----
 # TOC1 targets alone i.e. not targets of CCA1, LHY, LUX, ELF3, PRR7, PRR5 and ELF4
 # firstly an anti_join of CCA1 with LHY
@@ -1569,18 +1557,6 @@ UpSet_trimmed_col2 <- UpSet_trimmed_col2 %>%
   left_join(TOC1_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
-
-col2_summary_d1d2 <- UpSet_trimmed_col2 %>% 
-  group_by(type_d1d2) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'TOC1') %>% 
-  mutate(column = 2)
-
-col2_summary_d1d5 <- UpSet_trimmed_col2 %>% 
-  group_by(type_d1d5) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'TOC1') %>% 
-  mutate(column = 2)
 
 # col3----
 # LUX targets alone i.e. not targets of CCA1, LHY, TOC1, ELF3, PRR7, PRR5 and ELF4
@@ -1623,18 +1599,6 @@ UpSet_trimmed_col3 <- UpSet_trimmed_col3 %>%
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
 
-col3_summary_d1d2 <- UpSet_trimmed_col3 %>% 
-  group_by(type_d1d2) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'LUX') %>% 
-  mutate(column = 3)
-
-col3_summary_d1d5 <- UpSet_trimmed_col3 %>% 
-  group_by(type_d1d5) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'LUX') %>% 
-  mutate(column = 3)
-
 # col4----
 # CCA1 and LHY common targets - not targets of LUX, TOC1, ELF3, PRR7, PRR5 and ELF4
 # firstly an inner_join of CCA1 with LHY
@@ -1675,18 +1639,6 @@ UpSet_trimmed_col4 <- UpSet_trimmed_col4 %>%
   left_join(LHY_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
-
-col4_summary_d1d2 <- UpSet_trimmed_col4 %>% 
-  group_by(type_d1d2) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'LHY and CCA1') %>% 
-  mutate(column = 4)
-
-col4_summary_d1d5 <- UpSet_trimmed_col4 %>% 
-  group_by(type_d1d5) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'LHY and CCA1') %>% 
-  mutate(column = 4)
 
 # col5----
 # LUX and ELF3 common targets - not targets of LHY, CCA1, TOC1, PRR7, PRR5 and ELF4
@@ -1729,18 +1681,6 @@ UpSet_trimmed_col5 <- UpSet_trimmed_col5 %>%
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
 
-col5_summary_d1d2 <- UpSet_trimmed_col5 %>% 
-  group_by(type_d1d2) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'LUX and ELF3') %>% 
-  mutate(column = 5)
-
-col5_summary_d1d5 <- UpSet_trimmed_col5 %>% 
-  group_by(type_d1d5) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'LUX and ELF3') %>% 
-  mutate(column = 5)
-
 # col6----
 # PRR5 targets alone - not targets of LUX, LHY, TOC1, CCA1, ELF3, PRR7 and ELF4
 # firstly an anti_join of PRR5 with LUX
@@ -1781,18 +1721,6 @@ UpSet_trimmed_col6 <- UpSet_trimmed_col6 %>%
   left_join(PRR5_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
-
-col6_summary_d1d2 <- UpSet_trimmed_col6 %>% 
-  group_by(type_d1d2) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'PRR5') %>% 
-  mutate(column = 6)
-
-col6_summary_d1d5 <- UpSet_trimmed_col6 %>% 
-  group_by(type_d1d5) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'PRR5') %>% 
-  mutate(column = 6)
 
 # col7----
 # PRR7 targets alone - not targets of LUX, LHY, TOC1, CCA1, ELF3, PRR5 and ELF4
@@ -1835,18 +1763,6 @@ UpSet_trimmed_col7 <- UpSet_trimmed_col7 %>%
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
 
-col7_summary_d1d2 <- UpSet_trimmed_col7 %>% 
-  group_by(type_d1d2) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'PRR7') %>% 
-  mutate(column = 7)
-
-col7_summary_d1d5 <- UpSet_trimmed_col7 %>% 
-  group_by(type_d1d5) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'PRR7') %>% 
-  mutate(column = 7)
-
 # col8----
 # LUX and LHY common targets - not targets of TOC1, CCA1, ELF3, PRR7, PRR5 and ELF4
 # firstly an inner_join of PRR7 with LUX
@@ -1888,18 +1804,6 @@ UpSet_trimmed_col8 <- UpSet_trimmed_col8 %>%
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
 
-col8_summary_d1d2 <- UpSet_trimmed_col8 %>% 
-  group_by(type_d1d2) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'LUX and LHY') %>% 
-  mutate(column = 8)
-
-col8_summary_d1d5 <- UpSet_trimmed_col8 %>% 
-  group_by(type_d1d5) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'LUX and LHY') %>% 
-  mutate(column = 8)
-
 # col9----
 # LUX and LHY and CCA1 common targets - not targets of TOC1, ELF3, PRR7, PRR5 and ELF4
 # firstly take TF_common_LUX_LHY and then inner_join with CCA1
@@ -1937,18 +1841,6 @@ UpSet_trimmed_col9 <- UpSet_trimmed_col9 %>%
   left_join(LUX_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
-
-col9_summary_d1d2 <- UpSet_trimmed_col9 %>% 
-  group_by(type_d1d2) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'LUX and LHY and CCA1') %>% 
-  mutate(column = 9) 
-
-col9_summary_d1d5 <- UpSet_trimmed_col9 %>% 
-  group_by(type_d1d5) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'LUX and LHY and CCA1') %>% 
-  mutate(column = 9)
 
 # col10----
 # LUX and TOC1 common targets - not targets of LHY, CCA1, ELF3, PRR7, PRR5 and ELF4
@@ -1991,18 +1883,6 @@ UpSet_trimmed_col10 <- UpSet_trimmed_col10 %>%
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
 
-col10_summary_d1d2 <- UpSet_trimmed_col10 %>% 
-  group_by(type_d1d2) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'LUX and TOC1') %>% 
-  mutate(column = 10)
-
-col10_summary_d1d5 <- UpSet_trimmed_col10 %>% 
-  group_by(type_d1d5) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'LUX and TOC1') %>% 
-  mutate(column = 10)
-
 # col11----
 # CCA1 targets alone - not targets of LUX, LHY, TOC1, ELF3, PRR7, PRR5 and ELF4
 # firstly take an anti_join of CCA1 with LUX
@@ -2044,18 +1924,6 @@ UpSet_trimmed_col11 <- UpSet_trimmed_col11 %>%
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
 
-col11_summary_d1d2 <- UpSet_trimmed_col11 %>% 
-  group_by(type_d1d2) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'CCA1') %>% 
-  mutate(column = 11)
-
-col11_summary_d1d5 <- UpSet_trimmed_col11 %>% 
-  group_by(type_d1d5) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'CCA1') %>% 
-  mutate(column = 11)
-
 # col12----
 # LUX and ELF3 and ELF4 common targets - not targets of LHY, TOC1, CCA1, PRR7, and PRR5 
 # firstly take TF_common_LUX_ELF3 and do an inner_join with ELF4
@@ -2093,18 +1961,6 @@ UpSet_trimmed_col12 <- UpSet_trimmed_col12 %>%
   left_join(LUX_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
-
-col12_summary_d1d2 <- UpSet_trimmed_col12 %>% 
-  group_by(type_d1d2) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'LUX and ELF3 and ELF4') %>% 
-  mutate(column = 12)
-
-col12_summary_d1d5 <- UpSet_trimmed_col12 %>% 
-  group_by(type_d1d5) %>%
-  dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
-  mutate(clock = 'LUX and ELF3 and ELF4') %>% 
-  mutate(column = 12)
 
 # col13----
 # LHY and TOC1 common targets - not targets of LUX, CCA1, ELF3, PRR7, PRR5 and ELF4 
@@ -3176,4 +3032,226 @@ UpSet_trimmed_col40 <- UpSet_trimmed_col40 %>%
   left_join(LHY_bind_d1d5, by = c('gene_ID', 'cluster')) %>% 
   dplyr::select(-5) %>% 
   dplyr::rename(type_d1d5 = type)
+
+# UpSet plot overlap summaries
+get_summary <- function(df, group_col, clock_id, col_number){
+  
+  s <- df %>% 
+    group_by({{ group_col }}) %>%
+    dplyr::summarise(count = n()) %>% mutate(percent = (count/sum(count)) * 100) %>% 
+    mutate(clock = {{ clock_id }}) %>% 
+    mutate(column = {{ col_number }})
+}
+
+# d1d2----
+col1_summary_d1d2 <- get_summary(UpSet_trimmed_col1, type_d1d2, 'LHY', 1)
+col2_summary_d1d2 <- get_summary(UpSet_trimmed_col2, type_d1d2, 'TOC1', 2)
+col3_summary_d1d2 <- get_summary(UpSet_trimmed_col3, type_d1d2, 'LUX', 3)
+col4_summary_d1d2 <- get_summary(UpSet_trimmed_col4, type_d1d2, 'LHY and CCA1', 4)
+col5_summary_d1d2 <- get_summary(UpSet_trimmed_col5, type_d1d2, 'LUX and ELF3', 5)
+col6_summary_d1d2 <- get_summary(UpSet_trimmed_col6, type_d1d2, 'PRR5', 6)
+col7_summary_d1d2 <- get_summary(UpSet_trimmed_col7, type_d1d2, 'PRR7', 7)
+col8_summary_d1d2 <- get_summary(UpSet_trimmed_col8, type_d1d2, 'LUX and LHY', 8)
+col9_summary_d1d2 <- get_summary(UpSet_trimmed_col9, type_d1d2, 'LUX and LHY and CCA1', 9)
+col10_summary_d1d2 <- get_summary(UpSet_trimmed_col10, type_d1d2, 'LUX and TOC1', 10)
+
+col11_summary_d1d2 <- get_summary(UpSet_trimmed_col11, type_d1d2, 'CCA1', 11)
+col12_summary_d1d2 <- get_summary(UpSet_trimmed_col12, type_d1d2, 'LUX and ELF3 and ELF4', 12)
+col13_summary_d1d2 <- get_summary(UpSet_trimmed_col13, type_d1d2, 'LHY and TOC1', 13)
+col14_summary_d1d2 <- get_summary(UpSet_trimmed_col14, type_d1d2, 'LHY and TOC1 and CCA1', 14)
+col15_summary_d1d2 <- get_summary(UpSet_trimmed_col15, type_d1d2, 'LUX and TOC1 and PRR5', 15)
+col16_summary_d1d2 <- get_summary(UpSet_trimmed_col16, type_d1d2, 'LUX and LHY and ELF3', 16)
+col17_summary_d1d2 <- get_summary(UpSet_trimmed_col17, type_d1d2, 'LUX and LHY and CCA1 and PRR7', 17)
+col18_summary_d1d2 <- get_summary(UpSet_trimmed_col18, type_d1d2, 'ELF3', 18)
+col19_summary_d1d2 <- get_summary(UpSet_trimmed_col19, type_d1d2, 'LUX and ELF3 and PRR5 and ELF4', 19)
+col20_summary_d1d2 <- get_summary(UpSet_trimmed_col20, type_d1d2, 'LUX and TOC1 and ELF3 and PRR7 and PRR5 and ELF4', 20)
+
+col21_summary_d1d2 <- get_summary(UpSet_trimmed_col21, type_d1d2, 'LUX and LHY and ELF3 and ELF4', 21)
+col22_summary_d1d2 <- get_summary(UpSet_trimmed_col22, type_d1d2, 'LUX and LHY and CCA1 and ELF3 and PRR7 and PRR5', 22)
+col23_summary_d1d2 <- get_summary(UpSet_trimmed_col23, type_d1d2, 'LUX and LHY and TOC1', 23)
+col24_summary_d1d2 <- get_summary(UpSet_trimmed_col24, type_d1d2, 'PRR7 and PRR5', 24)
+col25_summary_d1d2 <- get_summary(UpSet_trimmed_col25, type_d1d2, 'TOC1 and PRR7', 25)
+col26_summary_d1d2 <- get_summary(UpSet_trimmed_col26, type_d1d2, 'LHY and TOC1 and PRR7', 26)
+col27_summary_d1d2 <- get_summary(UpSet_trimmed_col27, type_d1d2, 'LUX and ELF3 and PRR5', 27)
+col28_summary_d1d2 <- get_summary(UpSet_trimmed_col28, type_d1d2, 'LUX and CCA1 and ELF3', 28)
+col29_summary_d1d2 <- get_summary(UpSet_trimmed_col29, type_d1d2, 'LUX and TOC1 and ELF3', 29)
+col30_summary_d1d2 <- get_summary(UpSet_trimmed_col30, type_d1d2, 'LUX and TOC1 and CCA1', 30)
+
+col31_summary_d1d2 <- get_summary(UpSet_trimmed_col31, type_d1d2, 'LUX and LHY and ELF3 and PRR7 and PRR5 and ELF4', 31)
+col32_summary_d1d2 <- get_summary(UpSet_trimmed_col32, type_d1d2, 'LUX and LHY and CCA1 and ELF3', 32)
+col33_summary_d1d2 <- get_summary(UpSet_trimmed_col33, type_d1d2, 'LUX and LHY and TOC1 and CCA1 and ELF3 and PRR7 and PRR5', 33)
+col34_summary_d1d2 <- get_summary(UpSet_trimmed_col34, type_d1d2, 'LUX and LHY and TOC1 and CCA1 and ELF3 and PRR7 and PRR5 and ELF4', 34)
+col35_summary_d1d2 <- get_summary(UpSet_trimmed_col35, type_d1d2, 'ELF3 and ELF4', 35)
+col36_summary_d1d2 <- get_summary(UpSet_trimmed_col36, type_d1d2, 'TOC1 and PRR5', 36)
+col37_summary_d1d2 <- get_summary(UpSet_trimmed_col37, type_d1d2, 'TOC1 and PRR7 and PRR5', 37)
+col38_summary_d1d2 <- get_summary(UpSet_trimmed_col38, type_d1d2, 'TOC1 and CCA1', 38)
+col39_summary_d1d2 <- get_summary(UpSet_trimmed_col39, type_d1d2, 'LHY and PRR7', 39)
+col40_summary_d1d2 <- get_summary(UpSet_trimmed_col40, type_d1d2, 'LHY and PRR7 and PRR5', 40)
+
+# d1d5----
+col1_summary_d1d5 <- get_summary(UpSet_trimmed_col1, type_d1d5, 'LHY', 1)
+col2_summary_d1d5 <- get_summary(UpSet_trimmed_col2, type_d1d5, 'TOC1', 2)
+col3_summary_d1d5 <- get_summary(UpSet_trimmed_col3, type_d1d5, 'LUX', 3)
+col4_summary_d1d5 <- get_summary(UpSet_trimmed_col4, type_d1d5, 'LHY and CCA1', 4)
+col5_summary_d1d5 <- get_summary(UpSet_trimmed_col5, type_d1d5, 'LUX and ELF3', 5)
+col6_summary_d1d5 <- get_summary(UpSet_trimmed_col6, type_d1d5, 'PRR5', 6)
+col7_summary_d1d5 <- get_summary(UpSet_trimmed_col7, type_d1d5, 'PRR7', 7)
+col8_summary_d1d5 <- get_summary(UpSet_trimmed_col8, type_d1d5, 'LUX and LHY', 8)
+col9_summary_d1d5 <- get_summary(UpSet_trimmed_col9, type_d1d5, 'LUX and LHY and CCA1', 9)
+col10_summary_d1d5 <- get_summary(UpSet_trimmed_col10, type_d1d5, 'LUX and TOC1', 10)
+
+col11_summary_d1d5 <- get_summary(UpSet_trimmed_col11, type_d1d5, 'CCA1', 11)
+col12_summary_d1d5 <- get_summary(UpSet_trimmed_col12, type_d1d5, 'LUX and ELF3 and ELF4', 12)
+col13_summary_d1d5 <- get_summary(UpSet_trimmed_col13, type_d1d5, 'LHY and TOC1', 13)
+col14_summary_d1d5 <- get_summary(UpSet_trimmed_col14, type_d1d5, 'LHY and TOC1 and CCA1', 14)
+col15_summary_d1d5 <- get_summary(UpSet_trimmed_col15, type_d1d5, 'LUX and TOC1 and PRR5', 15)
+col16_summary_d1d5 <- get_summary(UpSet_trimmed_col16, type_d1d5, 'LUX and LHY and ELF3', 16)
+col17_summary_d1d5 <- get_summary(UpSet_trimmed_col17, type_d1d5, 'LUX and LHY and CCA1 and PRR7', 17)
+col18_summary_d1d5 <- get_summary(UpSet_trimmed_col18, type_d1d5, 'ELF3', 18)
+col19_summary_d1d5 <- get_summary(UpSet_trimmed_col19, type_d1d5, 'LUX and ELF3 and PRR5 and ELF4', 19)
+col20_summary_d1d5 <- get_summary(UpSet_trimmed_col20, type_d1d5, 'LUX and TOC1 and ELF3 and PRR7 and PRR5 and ELF4', 20)
+
+col21_summary_d1d5 <- get_summary(UpSet_trimmed_col21, type_d1d5, 'LUX and LHY and ELF3 and ELF4', 21)
+col22_summary_d1d5 <- get_summary(UpSet_trimmed_col22, type_d1d5, 'LUX and LHY and CCA1 and ELF3 and PRR7 and PRR5', 22)
+col23_summary_d1d5 <- get_summary(UpSet_trimmed_col23, type_d1d5, 'LUX and LHY and TOC1', 23)
+col24_summary_d1d5 <- get_summary(UpSet_trimmed_col24, type_d1d5, 'PRR7 and PRR5', 24)
+col25_summary_d1d5 <- get_summary(UpSet_trimmed_col25, type_d1d5, 'TOC1 and PRR7', 25)
+col26_summary_d1d5 <- get_summary(UpSet_trimmed_col26, type_d1d5, 'LHY and TOC1 and PRR7', 26)
+col27_summary_d1d5 <- get_summary(UpSet_trimmed_col27, type_d1d5, 'LUX and ELF3 and PRR5', 27)
+col28_summary_d1d5 <- get_summary(UpSet_trimmed_col28, type_d1d5, 'LUX and CCA1 and ELF3', 28)
+col29_summary_d1d5 <- get_summary(UpSet_trimmed_col29, type_d1d5, 'LUX and TOC1 and ELF3', 29)
+col30_summary_d1d5 <- get_summary(UpSet_trimmed_col30, type_d1d5, 'LUX and TOC1 and CCA1', 30)
+
+col31_summary_d1d5 <- get_summary(UpSet_trimmed_col31, type_d1d5, 'LUX and LHY and ELF3 and PRR7 and PRR5 and ELF4', 31)
+col32_summary_d1d5 <- get_summary(UpSet_trimmed_col32, type_d1d5, 'LUX and LHY and CCA1 and ELF3', 32)
+col33_summary_d1d5 <- get_summary(UpSet_trimmed_col33, type_d1d5, 'LUX and LHY and TOC1 and CCA1 and ELF3 and PRR7 and PRR5', 33)
+col34_summary_d1d5 <- get_summary(UpSet_trimmed_col34, type_d1d5, 'LUX and LHY and TOC1 and CCA1 and ELF3 and PRR7 and PRR5 and ELF4', 34)
+col35_summary_d1d5 <- get_summary(UpSet_trimmed_col35, type_d1d5, 'ELF3 and ELF4', 35)
+col36_summary_d1d5 <- get_summary(UpSet_trimmed_col36, type_d1d5, 'TOC1 and PRR5', 36)
+col37_summary_d1d5 <- get_summary(UpSet_trimmed_col37, type_d1d5, 'TOC1 and PRR7 and PRR5', 37)
+col38_summary_d1d5 <- get_summary(UpSet_trimmed_col38, type_d1d5, 'TOC1 and CCA1', 38)
+col39_summary_d1d5 <- get_summary(UpSet_trimmed_col39, type_d1d5, 'LHY and PRR7', 39)
+col40_summary_d1d5 <- get_summary(UpSet_trimmed_col40, type_d1d5, 'LHY and PRR7 and PRR5', 40)
+
+upset_columns_d1_d2 <- bind_rows(col1_summary_d1d2,
+                                 col2_summary_d1d2,
+                                 col3_summary_d1d2,
+                                 col4_summary_d1d2,
+                                 col5_summary_d1d2,
+                                 col6_summary_d1d2,
+                                 col7_summary_d1d2,
+                                 col8_summary_d1d2,
+                                 col9_summary_d1d2,
+                                 col10_summary_d1d2,
+                                 col11_summary_d1d2,
+                                 col12_summary_d1d2,
+                                 col13_summary_d1d2,
+                                 col14_summary_d1d2,
+                                 col15_summary_d1d2,
+                                 col16_summary_d1d2,
+                                 col17_summary_d1d2,
+                                 col18_summary_d1d2,
+                                 col19_summary_d1d2,
+                                 col20_summary_d1d2,
+                                 col21_summary_d1d2,
+                                 col22_summary_d1d2,
+                                 col23_summary_d1d2,
+                                 col24_summary_d1d2,
+                                 col25_summary_d1d2,
+                                 col26_summary_d1d2,
+                                 col27_summary_d1d2,
+                                 col28_summary_d1d2,
+                                 col29_summary_d1d2,
+                                 col30_summary_d1d2,
+                                 col31_summary_d1d2,
+                                 col32_summary_d1d2,
+                                 col33_summary_d1d2,
+                                 col34_summary_d1d2,
+                                 col35_summary_d1d2,
+                                 col36_summary_d1d2,
+                                 col37_summary_d1d2,
+                                 col38_summary_d1d2,
+                                 col39_summary_d1d2,
+                                 col40_summary_d1d2)
+
+upset_columns_d1_d5 <- bind_rows(col1_summary_d1d5,
+                                 col2_summary_d1d5,
+                                 col3_summary_d1d5,
+                                 col4_summary_d1d5,
+                                 col5_summary_d1d5,
+                                 col6_summary_d1d5,
+                                 col7_summary_d1d5,
+                                 col8_summary_d1d5,
+                                 col9_summary_d1d5,
+                                 col10_summary_d1d5,
+                                 col11_summary_d1d5,
+                                 col12_summary_d1d5,
+                                 col13_summary_d1d5,
+                                 col14_summary_d1d5,
+                                 col15_summary_d1d5,
+                                 col16_summary_d1d5,
+                                 col17_summary_d1d5,
+                                 col18_summary_d1d5,
+                                 col19_summary_d1d5,
+                                 col20_summary_d1d5,
+                                 col21_summary_d1d5,
+                                 col22_summary_d1d5,
+                                 col23_summary_d1d5,
+                                 col24_summary_d1d5,
+                                 col25_summary_d1d5,
+                                 col26_summary_d1d5,
+                                 col27_summary_d1d5,
+                                 col28_summary_d1d5,
+                                 col29_summary_d1d5,
+                                 col30_summary_d1d5,
+                                 col31_summary_d1d5,
+                                 col32_summary_d1d5,
+                                 col33_summary_d1d5,
+                                 col34_summary_d1d5,
+                                 col35_summary_d1d5,
+                                 col36_summary_d1d5,
+                                 col37_summary_d1d5,
+                                 col38_summary_d1d5,
+                                 col39_summary_d1d5,
+                                 col40_summary_d1d5)
+
+
+# plot d1d2----
+plot_upset_columns_d1_d2 <- upset_columns_d1_d2 %>% 
+  mutate(type = factor(type_d1d2, levels = c('gain_high_d1_d2', 'gain_medium_d1_d2', 'other_d1_d2', 'lose_medium_d1_d2', 'lose_high_d1_d2')),
+         clock = fct_reorder(clock, column)) %>% 
+  ggplot(aes(x = clock, y = count, fill = type)) +
+  scale_y_continuous(limits = c(0, 80), breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80)) +
+  scale_fill_manual(values = c('#31a354', '#74c476', '#cccccc', '#fb6a4a', '#de2d26'), labels = c('gain - high', 'gain - medium', 'other', 'lose - medium', 'lose - high')) +
+  geom_bar(position = 'stack', stat = 'identity') +
+  ggpubr::theme_pubr() +
+  theme(legend.position = "right") +
+  theme(axis.text.x=element_text(angle=30, hjust=1, vjust=1)) +
+  labs(fill = 'Amplitude', y = 'number', x = '') +
+  ggtitle("Amplitude patterns for clock targets",
+          subtitle = "Compare day 1 (20C steady state) with day 2 (to 4C transient-cooling)") 
+
+plot_upset_columns_d1_d2
+
+ggsave('./03_plots/plot_clock_d1d2.png', dpi = 300, height = 6, width = 6, units = 'in')
+
+# plot d1d5----
+plot_upset_columns_d1_d5 <- upset_columns_d1_d5 %>% 
+  mutate(type = factor(type_d1d5, levels = c('gain_high_d1_d5', 'gain_medium_d1_d5', 'other_d1_d5', 'lose_medium_d1_d5', 'lose_high_d1_d5')),
+         clock = fct_reorder(clock, column)) %>% 
+  ggplot(aes(x = clock, y = count, fill = type)) +
+  scale_y_continuous(limits = c(0, 80), breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80)) +
+  scale_fill_manual(values = c('#31a354', '#74c476', '#cccccc', '#fb6a4a', '#de2d26'), labels = c('gain - high', 'gain - medium', 'other', 'lose - medium', 'lose - high')) +
+  geom_bar(position = 'stack', stat = 'identity') +
+  ggpubr::theme_pubr() +
+  theme(legend.position = "right") +
+  theme(axis.text.x=element_text(angle=30, hjust=1, vjust=1)) +
+  labs(fill = 'Amplitude', y = 'number', x = '') +
+  ggtitle("Amplitude patterns for clock targets",
+          subtitle = "Compare day 1 (20C steady state) with day 2 (to 4C transient-cooling)") 
+
+plot_upset_columns_d1_d5
+
+ggsave('./03_plots/plot_clock_d1d2.png', dpi = 300, height = 6, width = 6, units = 'in')
+
 
