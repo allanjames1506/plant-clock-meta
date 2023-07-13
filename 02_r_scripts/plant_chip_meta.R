@@ -4448,55 +4448,62 @@ clock_components = colnames(test_join3)[1:8]
 
 test_join3[clock_components] = test_join3[clock_components] == 1
 
-upset(test_join3, 
-      clock_components,
-      annotations = list(
-        'Day1 vs Day2' = (
-          ggplot(mapping=aes(fill=type_d1d2)) +
-            geom_bar(stat='count', position='fill') + 
-            scale_y_continuous(labels=scales::percent_format()) +
-            labs(title = 'day 1 vs. day 2', fill = 'Amplitude', y = 'Proportion', x = '')) +
-            theme(legend.position = "top",
-                  legend.background = element_rect(fill = "grey95", colour = "grey30")) +
-            scale_fill_manual(values=c(
-            'gain_high_d1_d2' = '#31a354', 'gain_medium_d1_d2' = '#74c476', 'other_d1_d2' = '#cccccc', 'lose_medium_d1_d2' = '#fb6a4a', 'lose_high_d1_d2' = '#de2d26'
-          ), labels = c('gain - high', 'gain - medium', 'other', 'lose - medium', 'lose - high')),
-          'Day1 vs Day5'=(
-            ggplot(mapping=aes(fill = type_d1d5)) +
-              geom_bar(stat='count', position='fill') +
-              scale_y_continuous(labels=scales::percent_format()) +
-              theme(legend.position = "none") +
-              scale_fill_manual(values=c(
-              'gain_high_d1_d5' = '#31a354', 'gain_medium_d1_d5' = '#74c476', 'other_d1_d5' = '#cccccc', 'lose_medium_d1_d5' = '#fb6a4a', 'lose_high_d1_d5' = '#de2d26'
-            ), labels = c('gain - high', 'gain - medium', 'other', 'lose - medium', 'lose - high')) +
-              labs(title = 'day 1 vs. day 5', fill = 'Amplitude', y = 'Proportion', x = ''))),
-        # 'heatmap Day1 vs Day2' = (
-        #   ggplot(mapping=aes(fill = heatmap)) +
-        #     geom_bar(stat='count', position='fill') + 
-        #     scale_y_continuous(labels=scales::percent_format()) + 
-        #     scale_fill_manual(values=c(
-        #       'g1' = 'grey10', 'g2' = 'grey30', 'g3' = 'grey50', 'g4' = 'grey70'), 
-        #       labels = c('heatmap - group 1', 'heatmap - group 2', 'heatmap - group 3', 'heatmap - group 4')) + 
-        #     labs(fill = 'Amplitude', y = 'Proportion', x = ''))),
-      name='clock components',
-      width_ratio=0.1,
-      #sort_intersections_by='ratio',
-      #sort_intersections_by=c('degree', 'cardinality'),
-      sort_sets=FALSE,
-      min_size = 3,
-      set_sizes = (
-        upset_set_size() + 
-          theme(axis.text.x=element_text(angle=90),
-                axis.ticks.x=element_line())),
-      queries=list(upset_query(set='LHY', fill='#1a9850'),
-                   upset_query(set='CCA1', fill='#a6d96a'),
-                   upset_query(set='TOC1', fill='#4575b4'),
-                   upset_query(set='PRR5', fill='#fdae61'),
-                   upset_query(set='PRR7', fill='#f46d43'),
-                   upset_query(set='LUX', fill='#542788'),
-                   upset_query(set='ELF3', fill='#636363'),
-                   upset_query(set='ELF4', fill='#cccccc'))) + 
+p <- upset(test_join3, 
+           clock_components,
+           annotations = list(
+             'Day1 vs Day2' = (
+               ggplot(mapping=aes(fill=type_d1d2)) +
+                 geom_bar(stat='count', position='fill') + 
+                 scale_y_continuous(labels=scales::percent_format()) +
+                 labs(title = 'day 1 vs. day 2', fill = 'Amplitude', y = 'Proportion', x = '')) +
+               theme(legend.position = "top",
+                     legend.background = element_rect(fill = "grey95", colour = "grey30")) +
+               scale_fill_manual(values=c(
+                 'gain_high_d1_d2' = '#31a354', 'gain_medium_d1_d2' = '#74c476', 'other_d1_d2' = '#cccccc', 'lose_medium_d1_d2' = '#fb6a4a', 'lose_high_d1_d2' = '#de2d26'), 
+                 labels = c('gain - high', 'gain - medium', 'other', 'lose - medium', 'lose - high')),
+             'Day1 vs Day5'=(
+               ggplot(mapping=aes(fill = type_d1d5)) +
+                 geom_bar(stat='count', position='fill') +
+                 scale_y_continuous(labels=scales::percent_format()) +
+                 theme(legend.position = "none") +
+                 scale_fill_manual(values=c('gain_high_d1_d5' = '#31a354', 'gain_medium_d1_d5' = '#74c476', 'other_d1_d5' = '#cccccc', 'lose_medium_d1_d5' = '#fb6a4a', 'lose_high_d1_d5' = '#de2d26'), 
+                                   labels = c('gain - high', 'gain - medium', 'other', 'lose - medium', 'lose - high')) +
+                 labs(title = 'day 1 vs. day 5', fill = 'Amplitude', y = 'Proportion', x = ''))),
+           # 'heatmap Day1 vs Day2' = (ggplot(mapping=aes(fill = heatmap)) +
+           #                             geom_bar(stat='count', position='fill') +
+           #                             scale_y_continuous(labels=scales::percent_format()) +
+           #                             scale_fill_manual(values=c('g1' = 'grey10', 'g2' = 'grey30', 'g3' = 'grey50', 'g4' = 'grey70'),
+           #                                               labels = c('heatmap - group 1', 'heatmap - group 2', 'heatmap - group 3', 'heatmap - group 4')) +
+           #                             labs(fill = 'Amplitude', y = 'Proportion', x = '')),
+           name='clock components',
+           width_ratio=0.1,
+           # sort_intersections_by='ratio',
+           # sort_intersections_by=c('degree', 'cardinality'),
+           sort_sets=FALSE,
+           min_size = 3,
+           set_sizes = (upset_set_size() + 
+                          theme(axis.text.x=element_text(angle=90),
+                                axis.ticks.x=element_line())),
+           queries=list(upset_query(set='LHY', fill='#1a9850'),
+                        upset_query(set='CCA1', fill='#a6d96a'),
+                        upset_query(set='TOC1', fill='#4575b4'),
+                        upset_query(set='PRR5', fill='#fdae61'),
+                        upset_query(set='PRR7', fill='#f46d43'),
+                        upset_query(set='LUX', fill='#542788'),
+                        upset_query(set='ELF3', fill='#636363'),
+                        upset_query(set='ELF4', fill='#cccccc'))) + 
   patchwork::plot_layout(heights=c(0.25, 0.25, 1, 0.5)) 
+
+p
+
+legend <- cowplot::get_legend(p)
+
+cowplot::plot_grid(
+  legend,
+  p + theme(legend.position = "none"),
+  ncol = 1, rel_heights = c(0.1, 1)
+)
+
 
 
 data <- data.frame(
