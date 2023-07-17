@@ -259,11 +259,11 @@ TF_ezer_ELF4_merge <-inner_join (TF, ezer_ELF4, by = "gene_ID") %>%
 some text here
 
 ::: panel-tabset
-#### Day 1 vs Day 2 
+#### Day 1 vs Day 2
 
 ![](./03_plots/plot_clock_d1d2)
 
-#### Day 1 vs Day 5 
+#### Day 1 vs Day 5
 
 ![](./03_plots/plot_clock_d1d5)
 
@@ -273,11 +273,11 @@ Proportions of clock targets aligned with amplitude patterns
 some text here
 
 ::: panel-tabset
-#### Day 1 vs Day 2 
+#### Day 1 vs Day 2
 
 ![](./03_plots/circbar_d1d2_plot)
 
-#### Day 1 vs Day 5 
+#### Day 1 vs Day 5
 
 ![](./03_plots/circbar_d1d5_plot)
 
