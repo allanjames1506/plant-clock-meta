@@ -4456,8 +4456,6 @@ p <- upset(test_join3,
                  geom_bar(stat='count', position='fill') + 
                  scale_y_continuous(labels=scales::percent_format()) +
                  labs(title = 'day 1 vs. day 2', fill = 'Amplitude', y = 'Proportion', x = '')) +
-               theme(legend.position = "right",
-                     legend.background = element_rect(fill = "grey95", colour = "grey30")) +
                scale_fill_manual(values=c(
                  'gain_high_d1_d2' = '#31a354', 'gain_medium_d1_d2' = '#74c476', 'other_d1_d2' = '#cccccc', 'lose_medium_d1_d2' = '#fb6a4a', 'lose_high_d1_d2' = '#de2d26'), 
                  labels = c('gain - high', 'gain - medium', 'other', 'lose - medium', 'lose - high')),
@@ -4495,6 +4493,8 @@ p <- upset(test_join3,
   patchwork::plot_layout(heights=c(0.25, 0.25, 1, 0.5)) 
 
 p
+
+p + theme(legend.position = "top", legend.background = element_rect(fill = "grey95", colour = "grey30")) 
 
 legend <- cowplot::get_legend(p)
 
