@@ -284,6 +284,19 @@ some text here
 Proportions of clock targets aligned with amplitude patterns
 :::
 
+some text here
+
+::: panel-tabset
+#### All: overlap all clock targets
+
+![](./03_plots/UpSet_trimmed)
+
+#### Trimmed: overlap targets in clusters with high OR from heatmap
+
+![](./03_plots/UpSet)
+
+:::
+
 ## Quarto
 
 Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
