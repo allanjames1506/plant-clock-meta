@@ -12,6 +12,7 @@ library(UpSetR)
 library(devtools)
 install_github("jokergoo/ComplexHeatmap")
 library(ComplexHeatmap)
+library(ComplexUpset)
 
 setwd("/Users/Allan/Documents/plant_ChIP_meta/")
 
@@ -712,7 +713,6 @@ lose_amp_med_d1d2 <- amp_lose_medium_clusters_d1_d2 %>%
 other_amp_d1d2 <- amp_other_clusters_d1_d2 %>% 
   mutate(group = 'other')
 
-
 # list all clusters with their amplitude profile description
 clusters_d1d2 <- bind_rows(gain_amp_high_d1d2,
                            gain_amp_med_d1d2,
@@ -814,7 +814,6 @@ grid_data_circbar_d1d2$end <- grid_data_circbar_d1d2$end[ c( nrow(grid_data_circ
 grid_data_circbar_d1d2$start <- grid_data_circbar_d1d2$start - 1
 
 grid_data_circbar_d1d2 <- grid_data_circbar_d1d2[-1,]
-circbar_d1d2_plot
 
 # Make the plot
 circbar_d1d2_plot <- ggplot(circbar_d1d2_gs) +
@@ -848,6 +847,8 @@ circbar_d1d2_plot <- ggplot(circbar_d1d2_gs) +
   # Add base line information
   geom_segment(data=base_data_circbar_d1d2, aes(x = start, y = -5, xend = end, yend = -5), colour = "black", alpha=0.8, size=0.6 , inherit.aes = FALSE )  +
   geom_text(data=base_data_circbar_d1d2, aes(x = title, y = -15, label=group), hjust=c(1,1,0.5,0,0), vjust=c(0,0,-1,0,1), colour = "black", alpha=0.8, size=4, fontface="bold", inherit.aes = FALSE)
+
+circbar_d1d2_plot
 
 ggsave(circbar_d1d2_plot, file="./03_plots/circbar_d1d2_plot.png", width=8, height=8, units="in",dpi=200)
 
@@ -940,8 +941,6 @@ grid_data_circbar_d1d5$start <- grid_data_circbar_d1d5$start - 1
 
 grid_data_circbar_d1d5 <- grid_data_circbar_d1d5[-1,]
 
-circbar_d1d5_plot
-
 # Make the plot
 circbar_d1d5_plot <- ggplot(circbar_d1d5_gs) +
   
@@ -975,6 +974,8 @@ circbar_d1d5_plot <- ggplot(circbar_d1d5_gs) +
   geom_segment(data=base_data_circbar_d1d5, aes(x = start, y = -5, xend = end, yend = -5), colour = "black", alpha=0.8, size=0.6 , inherit.aes = FALSE )  +
   geom_text(data=base_data_circbar_d1d5, aes(x = title, y = -15, label=group), hjust=c(0.5,1,1,0,0), vjust=c(0.5,0,-1,0,1), colour = "black", alpha=0.8, size=4, fontface="bold", inherit.aes = FALSE)
 
+circbar_d1d5_plot
+
 ggsave(circbar_d1d5_plot, file="./03_plots/circbar_d1d5_plot.png", width=8, height=8, units="in",dpi=200)
 
 # Odds Ratios----
@@ -989,15 +990,15 @@ TF_network_clusters_count <-  TF_network_clusters %>%
   dplyr::summarise(cluster_number = n()) %>% 
   filter(!cluster == 0)
 
-LHY_CCG_cl_d1d2_fishers <- LHY_CCG_cl_d1d2 %>% 
-  dplyr::select(-group) %>% 
-  inner_join(TF_network_clusters_count) %>% 
-  mutate(fishers_col2 = sum(LHY) - LHY,
-         fishers_col4 = sum(cluster_number) - cluster_number) %>% 
-  dplyr::select(LHY, cluster_number, fishers_col2, fishers_col4) %>% 
-  dplyr::rename(fishers_col1 = LHY,
-                fishers_col3 = cluster_number) %>% 
-  relocate(fishers_col2, .after = fishers_col1)
+# LHY_CCG_cl_d1d2_fishers <- LHY_CCG_cl_d1d2 %>% 
+#   dplyr::select(-group) %>% 
+#   inner_join(TF_network_clusters_count) %>% 
+#   mutate(fishers_col2 = sum(LHY) - LHY,
+#          fishers_col4 = sum(cluster_number) - cluster_number) %>% 
+#   dplyr::select(LHY, cluster_number, fishers_col2, fishers_col4) %>% 
+#   dplyr::rename(fishers_col1 = LHY,
+#                 fishers_col3 = cluster_number) %>% 
+#   relocate(fishers_col2, .after = fishers_col1)
 
 fishers_prep<- function(df1, col_str1, col_str2, clock_id, col_str3, col_str4){
   
@@ -1418,12 +1419,7 @@ sets <- fromList(myGeneSets)
 
 UpSet<-upset(sets, nsets=8, number.angles = 30, order.by = "freq", matrix.color='grey40', point.size = 2.5, sets.x.label = "Clock ChIP targets", mainbar.y.label = "Gene Set Intersections", sets.bar.color = c("#542788", "#a6d96a", "#4575b4", "#1a9850", "#636363", "#f46d43", "#fdae61", "#cccccc"), text.scale = c(1.3, 1.3, 1, 1, 1, 0.75))
 
-UpSet
-
-png("Upset LHY CCA1 TOC1 LUX.png", width = 6, height = 6, units = 'in', res = 300)
-
-# for all 8 clock
-# png("Upset LHY CCA1 TOC1 LUX PRR5 PRR7 ELF3 ELF4.png", width = 8, height = 6, units = 'in', res = 300)
+png("./03_plots/UpSet.png", width = 6, height = 6, units = 'in', res = 300)
 
 UpSet
 
@@ -1476,12 +1472,7 @@ UpSet_trimmed<-upset(sets_trimmed,
                      sets.x.label = "Clock ChIP targets", 
                      mainbar.y.label = "Gene Set Intersections", 
                      sets.bar.color = c("#542788", "#a6d96a", "#4575b4", "#1a9850", "#636363", "#f46d43", "#fdae61", "#cccccc"), 
-                     text.scale = c(1.3, 1.3, 1, 1, 1, 0.9),
-                     base_annotations=list(
-                       'Intersection size'=intersection_size(
-                         counts=FALSE,
-                         mapping=aes(fill=mpaa)
-                       )))
+                     text.scale = c(1.3, 1.3, 1, 1, 1, 0.9))
 
 png("./03_plots/UpSet_trimmed.png", width = 8, height = 6, units = 'in', res = 300)
 
@@ -4069,7 +4060,7 @@ col38_summary_d1d5 <- get_summary(UpSet_trimmed_col38, type_d1d5, 'TOC1 and CCA1
 col39_summary_d1d5 <- get_summary(UpSet_trimmed_col39, type_d1d5, 'LHY and PRR7', 39)
 col40_summary_d1d5 <- get_summary(UpSet_trimmed_col40, type_d1d5, 'LHY and PRR7 and PRR5', 40)
 
-col41_summary_d1d5 <- get_summary(UpSet_trimmed_col41, type_d1d5, 'ELF4', 41)
+#col41_summary_d1d5 <- get_summary(UpSet_trimmed_col41, type_d1d5, 'ELF4', 41)
 col42_summary_d1d5 <- get_summary(UpSet_trimmed_col42, type_d1d5, 'LHY and CCA1 and PRR7', 42)
 col43_summary_d1d5 <- get_summary(UpSet_trimmed_col43, type_d1d5, 'LHY and TOC1 and CCA1 and PRR7 and PRR5', 43)
 col44_summary_d1d5 <- get_summary(UpSet_trimmed_col44, type_d1d5, 'LHY and CCA1 and ELF3', 44)
@@ -4331,13 +4322,13 @@ sets_trimmed_clock <- sets_trimmed %>%
                            LHY == 0 & CCA1 == 0 & TOC1 == 0 & PRR5 == 0 & PRR7 == 0 & LUX == 0 & ELF3 == 1 & ELF4 == 1 ~ 'ELF3 and ELF4',
                            TRUE ~ 'NA'
                            ))
-
-class(sets_trimmed)
-table(sets_trimmed_clock$clock)
-glimpse(UpSet_trimmed_col1_edit)
-
-UpSet_trimmed_col1_edit <- UpSet_trimmed_col1 %>% select(-1)
-UpSet_trimmed_col2_edit <- UpSet_trimmed_col2 %>% select(-1)
+# 
+# class(sets_trimmed)
+# table(sets_trimmed_clock$clock)
+# glimpse(UpSet_trimmed_col1_edit)
+# 
+# UpSet_trimmed_col1_edit <- UpSet_trimmed_col1 %>% select(-1)
+# UpSet_trimmed_col2_edit <- UpSet_trimmed_col2 %>% select(-1)
 
 UpSet_trimmed_col1_col64 <- bind_rows(UpSet_trimmed_col1, 
                                       UpSet_trimmed_col2,
@@ -4409,18 +4400,18 @@ UpSet_trimmed_col1_col64 <- bind_rows(UpSet_trimmed_col1,
                            cluster %in% c(11, 58, 67) ~ 'g4',
                            TRUE ~ 'NA'))
 
+# 
+# 
+# sets_trimmed_clock_types <- sets_trimmed_clock %>% left_join(UpSet_trimmed_col1_edit, join_by(clock))
+# sets_trimmed_clock_types <- sets_trimmed_clock %>% merge(UpSet_trimmed_col1_edit, by = 'clock')
+# 
+# test_join <- left_join(sets_trimmed_clock %>% group_by(clock) %>% mutate(id = row_number()),
+#                        UpSet_trimmed_col1 %>% group_by(clock) %>% mutate(id = row_number()),
+#                        UpSet_trimmed_col2 %>% group_by(clock) %>% mutate(id = row_number()),
+#                        by = c("clock", "id"))
 
-
-sets_trimmed_clock_types <- sets_trimmed_clock %>% left_join(UpSet_trimmed_col1_edit, join_by(clock))
-sets_trimmed_clock_types <- sets_trimmed_clock %>% merge(UpSet_trimmed_col1_edit, by = 'clock')
-
-test_join <- left_join(sets_trimmed_clock %>% group_by(clock) %>% mutate(id = row_number()),
-                       UpSet_trimmed_col1 %>% group_by(clock) %>% mutate(id = row_number()),
-                       UpSet_trimmed_col2 %>% group_by(clock) %>% mutate(id = row_number()),
-                       by = c("clock", "id"))
-
-test_join3 <- sets_trimmed_clock %>% group_by(clock) %>% mutate(id = row_number()) %>% 
-  left_join(UpSet_trimmed_col1_col64 %>% group_by(clock) %>% mutate(id = row_number())) %>% 
+test_join3 <- sets_trimmed_clock %>% group_by(clock) %>% dplyr::mutate(id = row_number()) %>% 
+  left_join(UpSet_trimmed_col1_col64 %>% group_by(clock) %>% dplyr::mutate(id = row_number())) %>% 
   select(-id) %>% 
   mutate(type_d1d2 = factor(type_d1d2, levels = c('gain_high_d1_d2', 'gain_medium_d1_d2', 'other_d1_d2', 'lose_medium_d1_d2', 'lose_high_d1_d2')),
          type_d1d5 = factor(type_d1d5, levels = c('gain_high_d1_d5', 'gain_medium_d1_d5', 'other_d1_d5', 'lose_medium_d1_d5', 'lose_high_d1_d5')),
@@ -4438,9 +4429,7 @@ table(test_join3$heatmap)
 #                        UpSet_trimmed_col2_edit %>% group_by(clock) %>% mutate(id = row_number()), 
 #                        by = c("clock", "id"))
 
-?left_join
 clock_components = colnames(sets_trimmed)[1:8]
-clock_components
 
 sets_trimmed[clock_components] = sets_trimmed[clock_components] == 1
 
