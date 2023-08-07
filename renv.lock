@@ -1881,6 +1881,11 @@
       ],
       "Hash": "227045be9aee47e6dda9bb38ac870d67"
     },
+    "renv": {
+      "Package": "renv",
+      "Version": "1.0.0",
+      "Source": "Repository"
+    },
     "reprex": {
       "Package": "reprex",
       "Version": "2.0.2",
