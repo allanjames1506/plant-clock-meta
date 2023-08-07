@@ -13,15 +13,19 @@ editor: visual
 bibliography: references.bib
 ---
 
-## Introduction
-
 ```{r pre-setup, message=FALSE, warning=FALSE, echo=F}
 
-install.packages(setdiff("pacman", rownames(installed.packages())))
-library("pacman")
-p_load(tidyr, readr, ggplot2, dplyr, janitor, MetaCycle, ggbiplot, ggrepel, stringr, purrr)
+#install.packages(setdiff("pacman", rownames(installed.packages())))
+#library("pacman")
+library(dplyr)
+library(tidyr)
+library(readr)
+library(stringr)
+#p_load(tidyr, readr, ggplot2, dplyr, janitor, MetaCycle, ggbiplot, ggrepel, stringr, purrr)
 
 ```
+
+## Introduction
 
 The circadian clock is a molecular timekeeping system that provides organisms with a mechanism to adapt to 24-h day/night cycles. The clock activates biological processes at specific times of the day, such as preparing for colder temperatures in the evening.
 
@@ -243,7 +247,7 @@ TF_ezer_ELF4_merge <-inner_join (TF, ezer_ELF4, by = "gene_ID") %>%
 ```
 
 |           *trans* factor            |   Publication    |         Dataset         |  Epitope   | No. of *cis* targets |                                     No. (%) in the TF network                                     |
-|:----------:|:----------:|:----------:|:----------:|:----------:|:----------:|
+|:--------:|:--------:|:--------:|:--------:|:--------:|:----------------------:|
 |   LATE ELONGATED HYPOCOTYL (LHY)    |   [@adams2018]   |        Table S2         | native LHY |   `r nrow(adams)`    |       `r nrow(TF_adams_merge)` (`r sprintf("%.1f", nrow(TF_adams_merge)/nrow(adams)*100)`%)       |
 | CIRCADIAN CLOCK ASSOCIATED-1 (CCA1) |   [@nagel2015]   |        Table S1         |  GFP-CCA1  |   `r nrow(nagel)`    |       `r nrow(TF_nagel_merge)` (`r sprintf("%.1f", nrow(TF_nagel_merge)/nrow(nagel)*100)`%)       |
 | CIRCADIAN CLOCK ASSOCIATED-1 (CCA1) |  [@kamioka2016]  |        Table S1C        | CCA1-FLAG  |  `r nrow(kamioka)`   |    `r nrow(TF_kamioka_merge)` (`r sprintf("%.1f", nrow(TF_kamioka_merge)/nrow(kamioka)*100)`%)    |
@@ -294,7 +298,6 @@ some text here
 #### Trimmed: overlap targets in clusters with high OR from heatmap
 
 ![](./03_plots/UpSet)
-
 :::
 
 ## Quarto
